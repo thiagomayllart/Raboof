@@ -27,7 +27,7 @@ This tool is integrated with the output produced using Burp Suite. You **MUST US
   In the **Site Map** interface in Burp Suite -> Right Click the request -> Save Item -> **UNCHECK Base64 encode requests and responses**
 2) Change the extension: .xml to .txt.
 
-**HTTP Parameter Pollution Parameters: **
+**HTTP Parameter Pollution Parameters:**
     
      -f | The location of your .txt request
      -o | Select 'pp' as Parameter Pollution option
