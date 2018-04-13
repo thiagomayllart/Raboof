@@ -106,8 +106,9 @@ def HTTP_request():
             if method == 'POST':
                 original_request = post_call(path, data, headers)
                 if 'multipart/form-data' in headers.get('Content-Type'):
-                    boundaries = data.split('\n\n')
-                    ParameterPollution.multi_post_call(path, headers, payloadslist, boundaries, original_request)
+                    if payloadstype == 'pp':
+                        boundaries = data.split('\n\n')
+                        ParameterPollution.multi_post_call(path, headers, payloadslist, boundaries, original_request)
 
 
                 else:
