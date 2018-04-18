@@ -5,7 +5,7 @@ import urllib
 payload_type = None
 parameter_pollution_payload = '&rab=oof'
 soap_inj_foo = '</foo>'
-soap_inj_foo_closed = '<foo></foo>'
+soap_inj_foo_closed = '<foo></bar>'
 soap_inj_comment = '<!--'
 soap_inj_close_comment = '<!--beasted!-->'
 paylist = None
@@ -45,6 +45,7 @@ def parameter_pollution_payload_gen():
 
 def soap_injection_payload_gen():
     global paylist, soap_inj_foo, soap_inj_foo_closed, soap_inj_comment, soap_inj_close_comment
+    paylist = []
     paylist.append([urllib.quote_plus(soap_inj_foo), urllib.quote_plus(soap_inj_foo_closed)])
     paylist.append([urllib.quote_plus(urllib.quote_plus(soap_inj_foo)), urllib.quote_plus(urllib.quote_plus(soap_inj_foo_closed))])
     paylist.append([soap_inj_foo.replace('<', lessthanutf16).replace('/', forwardslashutf16).replace('>', greaterthanutf16),

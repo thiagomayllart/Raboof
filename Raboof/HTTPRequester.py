@@ -121,6 +121,11 @@ def HTTP_request():
                         post_params = data.split('&')
                         ParameterPollution.common_post_call(path, headers, payloadslist, post_params, original_request)
 
+                    else:
+                        post_params = data.split('&')
+                        if payloadstype == 'si':
+                            SOAPInjection.common_post_call(path, headers, payloadslist, post_params, original_request)
+
 
 
             if method == 'GET':
@@ -128,6 +133,9 @@ def HTTP_request():
                     original_request = get_call(path, headers)
                     if payloadstype == 'pp':
                         ParameterPollution.get_call(path, headers, data, payloadslist, original_request)
+
+                    if payloadstype == 'si':
+                        SOAPInjection.get_call(path, headers, data, payloadslist, original_request)
 
                 else:
                     #no params to test
