@@ -3,6 +3,7 @@ import Thread_types
 import time
 import PayloadGenerator
 import ParameterPollution
+import SOAPInjection
 
 requests_file = None
 arr = None
@@ -87,6 +88,7 @@ def HTTP_request():
         raw_request = find_between(request, '"false"><![CDATA[', ']]></request>')
         raw_header, data = raw_request.split('\n\n', 1)
         lines = raw_header.split('\n')
+        method = ''
         if 'POST' in lines[0]:
             method = 'POST'
         else:
@@ -106,10 +108,12 @@ def HTTP_request():
             if method == 'POST':
                 original_request = post_call(path, data, headers)
                 if 'multipart/form-data' in headers.get('Content-Type'):
+                    boundaries = data.split('\n\n')
                     if payloadstype == 'pp':
-                        boundaries = data.split('\n\n')
                         ParameterPollution.multi_post_call(path, headers, payloadslist, boundaries, original_request)
 
+                    if payloadstype == 'si':
+                        SOAPInjection.multi_post_call(path, headers, payloadslist, boundaries, original_request)
 
                 else:
 
