@@ -33,7 +33,7 @@ def setOptions(arguments1):
     if '-th' not in arguments:
         max_threads = 30
     else:
-        max_threads = arguments.split("-th", 1)[1].split(" ")[1]
+        max_threads = int(arguments.split("-th", 1)[1].split(" ")[1])
     if '-dl' not in arguments:
         delay = 0
     else:

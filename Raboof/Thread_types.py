@@ -2,16 +2,20 @@ import HTTPRequester
 from threading import Thread
 
 class Threadpp(Thread):
-    def __init__(self, path, data, headers, original_request, param_exploited, reqtype, gibberish_response, gibberish_numb_response):
+    def __init__(self, path, data, headers, original_request, param_exploited, reqtype, gibberish_data, gibberish_numb_data):
         Thread.__init__(self)
+        if reqtype == 'POST':
+            self.gibberish_response = HTTPRequester.post_call(path, gibberish_data, headers)
+            self.gibberish_numb_response = HTTPRequester.post_call(path, gibberish_numb_data, headers)
+        else:
+            self.gibberish_response = HTTPRequester.get_call(gibberish_data, headers)
+            self.gibberish_numb_response = HTTPRequester.get_call(gibberish_numb_data, headers)
         self.path = path
         self.data = data
         self.headers = headers
         self.original_request = original_request
         self.param_exploited = param_exploited
         self.reqtype = reqtype
-        self.gibberish_response = gibberish_response
-        self.gibberish_numb_response = gibberish_numb_response
 
     def run(self):
         response = ''
@@ -37,8 +41,14 @@ class Threadpp(Thread):
             pass
 
 class Threadsi(Thread):
-    def __init__(self, path, headers, data_pay, data_counter_pay, original_request, param_exploited, reqtype, pay_response, counter_pay_response):
+    def __init__(self, path, headers, data_pay, data_counter_pay, original_request, param_exploited, reqtype, pay_path, counter_pay_path):
         Thread.__init__(self)
+        if reqtype == 'POST':
+            self.pay_response = HTTPRequester.post_call(path, data_pay, headers)
+            self.counter_pay_response = HTTPRequester.post_call(path, data_counter_pay, headers)
+        else:
+            self.pay_response = HTTPRequester.get_call(pay_path, headers)
+            self.counter_pay_response = HTTPRequester.get_call(counter_pay_path, headers)
         self.path = path
         self.headers = headers
         self.original_request = original_request
@@ -46,8 +56,6 @@ class Threadsi(Thread):
         self.data_pay = data_pay
         self.data_counter_pay = data_counter_pay
         self.reqtype = reqtype
-        self.pay_response = pay_response
-        self.counter_pay_response = counter_pay_response
 
     def run(self):
         response = ''

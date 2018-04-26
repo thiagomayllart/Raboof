@@ -17,21 +17,19 @@ def multi_post_call(path, headers, payloadslist, boundaries, original_request):
             gibberish_boundaries = boundaries[:]
             gibberish_boundaries[i] = '\n'.join(gibberish_line)
             gibberish_data = '\n\n'.join(gibberish_boundaries)
-            gibberish_response = HTTPRequester.post_call(path, gibberish_data, headers)
 
             gibberish_numb_line = lines[:]
             gibberish_numb_line[1] = lines[1] + "777"
             gibberish_numb_boundaries = boundaries[:]
             gibberish_numb_boundaries[i] = '\n'.join(gibberish_numb_line)
             gibberish_numb_data = '\n\n'.join(gibberish_numb_boundaries)
-            gibberish_numb_response = HTTPRequester.post_call(path, gibberish_numb_data, headers)
 
             lines[0] = lines[0] + payloadslist[j]
             boundaries[i] = '\n'.join(lines)
             data = '\n\n'.join(boundaries)
             HTTPRequester.check_max_threads()
             new_thread = Thread_types.Threadpp(path, data, headers, original_request, lines[0], 'POST',
-                                               gibberish_response, gibberish_numb_response)
+                                               gibberish_data, gibberish_numb_data)
             HTTPRequester.thread_starter(new_thread)
             lines[0] = oldline
             j = j + 1
@@ -52,21 +50,19 @@ def common_post_call(path, headers, payloadslist, post_params, original_request)
             gibberish_params = post_params[:]
             gibberish_params[i] = '='.join(gibberish_vars)
             gibberish_data = '&'.join(gibberish_params)
-            gibberish_response = HTTPRequester.post_call(path, gibberish_data, headers)
 
             gibberish_numb_vars = vars[:]
             gibberish_numb_vars[1] = vars[1] + "777"
             gibberish_numb_params = post_params[:]
             gibberish_numb_params[i] = '='.join(gibberish_numb_vars)
             gibberish_numb_data = '&'.join(gibberish_numb_params)
-            gibberish_numb_response = HTTPRequester.post_call(path, gibberish_numb_data, headers)
 
             vars[1] = vars[1] + payload
             post_params[i] = '='.join(vars)
             data = '&'.join(post_params)
             HTTPRequester.check_max_threads()
             new_thread = Thread_types.Threadpp(path, data, headers, original_request, '='.join(vars), 'POST',
-                                               gibberish_response, gibberish_numb_response)
+                                               gibberish_data, gibberish_numb_data)
             HTTPRequester.thread_starter(new_thread)
             post_params = oldpost_params[:]
         i = i + 1
@@ -87,7 +83,6 @@ def get_call(path, headers, data, payloadslist, original_request):
             gibberish_params[i] = '='.join(gibberish_vars)
             gibberish_data = '&'.join(gibberish_params)
             gibberish_path = url + '?' + gibberish_data
-            gibberish_response = HTTPRequester.get_call(gibberish_path, headers)
 
             gibberish_numb_vars = var[:]
             gibberish_numb_vars[1] = var[1] + "777"
@@ -95,7 +90,6 @@ def get_call(path, headers, data, payloadslist, original_request):
             gibberish_numb_params[i] = '='.join(gibberish_numb_vars)
             gibberish_numb_data = '&'.join(gibberish_numb_params)
             gibberish_numb_path = url + '?' + gibberish_numb_data
-            gibberish_numb_response = HTTPRequester.get_call(gibberish_numb_path, headers)
 
             var[1] = var[1] + payload
             var = '='.join(var)
@@ -103,8 +97,8 @@ def get_call(path, headers, data, payloadslist, original_request):
             params = '&'.join(params)
             path = url + '?' + params
             HTTPRequester.check_max_threads()
-            new_thread = Thread_types.Threadpp(path, data, headers, original_request, var, 'GET', gibberish_response,
-                                               gibberish_numb_response)
+            new_thread = Thread_types.Threadpp(path, data, headers, original_request, var, 'GET', gibberish_path,
+                                               gibberish_numb_path)
             HTTPRequester.thread_starter(new_thread)
             params = oldparams[:]
         i = i + 1
