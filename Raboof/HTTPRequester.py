@@ -12,7 +12,7 @@ max_threads = None
 delay = None
 option = None
 threads_list = None
-
+os = None
 
 def thread_starter(new_thread):
     global delay
@@ -21,11 +21,12 @@ def thread_starter(new_thread):
     time.sleep(delay)
 
 
-def set_params(option1, max_threads1, delay1):
-    global option, max_threads, delay
+def set_params(option1, max_threads1, delay1, os1):
+    global option, max_threads, delay, os
     max_threads = max_threads1
     option = option1
     delay = delay1
+    os = os1
 
 
 def get_call(path, headers):
@@ -115,18 +116,20 @@ def HTTP_request():
                     if payloadstype == 'si':
                         SOAPInjection.multi_post_call(path, headers, payloadslist, boundaries, original_request)
 
-                else:
+                    if payloadstype == 'pt':
+                        pass
 
+
+                else:
+                    post_params = data.split('&')
                     if payloadstype == 'pp':
-                        post_params = data.split('&')
                         ParameterPollution.common_post_call(path, headers, payloadslist, post_params, original_request)
 
-                    else:
-                        post_params = data.split('&')
-                        if payloadstype == 'si':
-                            SOAPInjection.common_post_call(path, headers, payloadslist, post_params, original_request)
+                    if payloadstype == 'si':
+                        SOAPInjection.common_post_call(path, headers, payloadslist, post_params, original_request)
 
-
+                    if payloadstype == 'pt':
+                        pass
 
             if method == 'GET':
                 if '?' in path:
@@ -136,6 +139,9 @@ def HTTP_request():
 
                     if payloadstype == 'si':
                         SOAPInjection.get_call(path, headers, data, payloadslist, original_request)
+
+                    if payloadstype == 'pt':
+                        pass
 
                 else:
                     #no params to test

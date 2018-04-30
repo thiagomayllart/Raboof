@@ -6,11 +6,24 @@ requests_location = None
 option = None
 max_threads = None
 delay = None
+os = None
 
 def present():
-    global option
+    global option, os
     if option == 'pp':
         print '[+] Testing for HTTP Parameter Pollution '
+        print '[+] FILE: ' + str(requests_location)
+        print '[+] Threads: ' + str(max_threads)
+        print '[+] Delay between requests: ' + str(delay)
+        print '-------------------------------------------------------------------------------------------------------'
+
+    if option == 'pt':
+        print '[-] Which Operational System you want to test for Path Traversal?'
+        print '[-] b for both'
+        print '[-] w for windows'
+        print '[-] l for linux'
+        os = raw_input()
+        print '[+] Testing for Path Traversal '
         print '[+] FILE: ' + str(requests_location)
         print '[+] Threads: ' + str(max_threads)
         print '[+] Delay between requests: ' + str(delay)
@@ -26,7 +39,7 @@ def usage():
 
 
 def setOptions(arguments1):
-    global requests_location, option, max_threads, delay
+    global requests_location, option, max_threads, delay, os
     arguments = ' '.join(arguments1)
     requests_location = arguments.split("-f", 1)[1].split(" ")[1]
     option = arguments.split("-o", 1)[1].split(" ")[1]
@@ -46,14 +59,14 @@ def get_params():
     return params
 
 def main():
-    global requests_location, option, max_threads, delay
+    global requests_location, option, max_threads, delay, os
     try:
         setOptions(sys.argv[1:])
     except Exception as msg:
         print usage()
         sys.exit()
     HTTPRequester.set_file(requests_location)
-    HTTPRequester.set_params(option, max_threads, delay)
+    HTTPRequester.set_params(option, max_threads, delay, os)
     present()
     HTTPRequester.HTTP_request()
 
