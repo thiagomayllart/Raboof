@@ -7,9 +7,10 @@ option = None
 max_threads = None
 delay = None
 os = None
+dt = 0
 
 def present():
-    global option, os
+    global option, os, dt
     if option == 'pp':
         print '[+] Testing for HTTP Parameter Pollution '
         print '[+] FILE: ' + str(requests_location)
@@ -23,6 +24,9 @@ def present():
         print '[-] w for windows'
         print '[-] l for linux'
         os = raw_input()
+        print '[-] There will be a lot of file paths tested in case of detection of path traversal vulnerabilities.'
+        print '[-] Type the delay between each request for these paths:'
+        dt = raw_input()
         print '[+] Testing for Path Traversal '
         print '[+] FILE: ' + str(requests_location)
         print '[+] Threads: ' + str(max_threads)
@@ -59,14 +63,14 @@ def get_params():
     return params
 
 def main():
-    global requests_location, option, max_threads, delay, os
+    global requests_location, option, max_threads, delay, os, dt
     try:
         setOptions(sys.argv[1:])
     except Exception as msg:
         print usage()
         sys.exit()
     HTTPRequester.set_file(requests_location)
-    HTTPRequester.set_params(option, max_threads, delay, os)
+    HTTPRequester.set_params(option, max_threads, delay, os, int(dt))
     present()
     HTTPRequester.HTTP_request()
 

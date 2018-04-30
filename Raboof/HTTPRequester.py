@@ -4,6 +4,7 @@ import time
 import PayloadGenerator
 import ParameterPollution
 import SOAPInjection
+import PathTraversal
 
 requests_file = None
 arr = None
@@ -13,6 +14,7 @@ delay = None
 option = None
 threads_list = None
 os = None
+dt = None
 
 def thread_starter(new_thread):
     global delay
@@ -21,12 +23,13 @@ def thread_starter(new_thread):
     time.sleep(delay)
 
 
-def set_params(option1, max_threads1, delay1, os1):
-    global option, max_threads, delay, os
+def set_params(option1, max_threads1, delay1, os1, dt1):
+    global option, max_threads, delay, os, dt
     max_threads = max_threads1
     option = option1
     delay = delay1
     os = os1
+    dt = dt1
 
 
 def get_call(path, headers):
@@ -74,7 +77,7 @@ def find_between( s, first, last ):
 
 
 def HTTP_request():
-    global option, threads_list, max_threads, delay
+    global option, threads_list, max_threads, delay, os, dt
     threads_list = []
     requests = file_string.split('<item>')
     requests.pop(0)
@@ -117,7 +120,7 @@ def HTTP_request():
                         SOAPInjection.multi_post_call(path, headers, payloadslist, boundaries, original_request)
 
                     if payloadstype == 'pt':
-                        pass
+                        PathTraversal.multi_post_call(path, headers, payloadslist, boundaries, original_request, os, dt)
 
 
                 else:
@@ -129,7 +132,7 @@ def HTTP_request():
                         SOAPInjection.common_post_call(path, headers, payloadslist, post_params, original_request)
 
                     if payloadstype == 'pt':
-                        pass
+                        PathTraversal.common_post_call(path, headers, payloadslist, post_params, original_request, os, dt)
 
             if method == 'GET':
                 if '?' in path:
@@ -141,7 +144,7 @@ def HTTP_request():
                         SOAPInjection.get_call(path, headers, data, payloadslist, original_request)
 
                     if payloadstype == 'pt':
-                        pass
+                        PathTraversal.get_call(path, headers, data, payloadslist, original_request, os, dt)
 
                 else:
                     #no params to test
