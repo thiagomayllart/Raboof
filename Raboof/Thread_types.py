@@ -127,14 +127,87 @@ class Threadpt(Thread):
                                                          pay, self.aux_params_to_rebuild_req[4],
                                                          self.aux_params_to_rebuild_req[5])
                     time.sleep(self.delay)
-                    if test[0] == True:
+                    if test[0] == True and abs(int(test[2]) - int(self.original_request.headers.get('content-length'))) > 100 and int(test[2]) != 0:
                         print 'Path Traversal on: ' + test[1]
 
             else:
                 if self.reqtype == 'POST':
-                    pass
+                    for pay in self.windows_payloads:
+                        test = PathTraversal.common_post_call_test_reply(self.aux_params_to_rebuild_req[0],
+                                                                        self.aux_params_to_rebuild_req[1],
+                                                                        self.aux_params_to_rebuild_req[2],
+                                                                        self.aux_params_to_rebuild_req[3],
+                                                                        pay, self.aux_params_to_rebuild_req[4],
+                                                                        self.aux_params_to_rebuild_req[5])
+                        time.sleep(self.delay)
+                        if test[0] == True and abs(
+                                int(test[2]) - int(self.original_request.headers.get('content-length'))) > 100 and int(
+                                test[2]) != 0:
+                            print 'Path Traversal on: ' + test[1]
 
                 else:
                     if self.reqtype == 'GET':
-                        pass
+                        for pay in self.windows_payloads:
+                            test = PathTraversal.get_call_test_reply(self.aux_params_to_rebuild_req[0],
+                                                                             self.aux_params_to_rebuild_req[1],
+                                                                             self.aux_params_to_rebuild_req[2],
+                                                                             self.aux_params_to_rebuild_req[3],
+                                                                             pay, self.aux_params_to_rebuild_req[4],
+                                                                             self.aux_params_to_rebuild_req[5],
+                                                                             self.aux_params_to_rebuild_req[6])
+                            time.sleep(self.delay)
+                            if test[0] == True and abs(int(test[2]) - int(
+                                    self.original_request.headers.get('content-length'))) > 100 and int(test[2]) != 0:
+                                print '[+][+][+][+][+][+][+][+][+][+][+]'
+                                print int(test[2])
+                                print self.original_request.headers.get('content-length')
+                                print 'PATH TRAVERSAL FOUND'
+                                print 'PATH: ' + self.path
+                                print 'REQUEST: ' + self.reqtype
+                                print 'PARAM: ' + self.param_exploited
+                                print 'ON: ' + test[1]
+                                print '[+][+][+][+][+][+][+][+][+][+][+]'
 
+        if self.os == 'b' or self.os == 'l':
+            if self.reqtype == 'multi_POST':
+                for pay in self.linux_payloads:
+                    test = PathTraversal.multi_post_call_test_reply(self.aux_params_to_rebuild_req[0], self.aux_params_to_rebuild_req[1],
+                                                     self.aux_params_to_rebuild_req[2], self.aux_params_to_rebuild_req[3],
+                                                         pay, self.aux_params_to_rebuild_req[4],
+                                                         self.aux_params_to_rebuild_req[5])
+                    time.sleep(self.delay)
+                    if test[0] == True and abs(
+                            int(test[2]) - int(self.original_request.headers.get('content-length'))) > 100 and int(
+                            test[2]) != 0:
+                        print 'Path Traversal on: ' + test[1]
+
+            else:
+                if self.reqtype == 'POST':
+                    for pay in self.windows_payloads:
+                        test = PathTraversal.common_post_call_test_reply(self.aux_params_to_rebuild_req[0],
+                                                                        self.aux_params_to_rebuild_req[1],
+                                                                        self.aux_params_to_rebuild_req[2],
+                                                                        self.aux_params_to_rebuild_req[3],
+                                                                        pay, self.aux_params_to_rebuild_req[4],
+                                                                        self.aux_params_to_rebuild_req[5])
+                        time.sleep(self.delay)
+                        if test[0] == True and abs(
+                                int(test[2]) - int(self.original_request.headers.get('content-length'))) > 100 and int(
+                                test[2]) != 0:
+                            print 'Path Traversal on: ' + test[1]
+
+                else:
+                    if self.reqtype == 'GET':
+                        for pay in self.windows_payloads:
+                            test = PathTraversal.get_call_test_reply(self.aux_params_to_rebuild_req[0],
+                                                                             self.aux_params_to_rebuild_req[1],
+                                                                             self.aux_params_to_rebuild_req[2],
+                                                                             self.aux_params_to_rebuild_req[3],
+                                                                             pay, self.aux_params_to_rebuild_req[4],
+                                                                             self.aux_params_to_rebuild_req[5],
+                                                                             self.aux_params_to_rebuild_req[6])
+                            time.sleep(self.delay)
+                            if test[0] == True and abs(int(test[2]) - int(
+                                    self.original_request.headers.get('content-length'))) > 100 and int(test[2]) != 0:
+                                print 'Path Traversal on: ' + test[1]
+        print '--------------------------------------------------------------------------------------------------------'

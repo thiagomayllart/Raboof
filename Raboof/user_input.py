@@ -69,9 +69,9 @@ def main():
     except Exception as msg:
         print usage()
         sys.exit()
+    present()
     HTTPRequester.set_file(requests_location)
     HTTPRequester.set_params(option, max_threads, delay, os, int(dt))
-    present()
     HTTPRequester.HTTP_request()
 
 main()
