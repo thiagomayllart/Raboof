@@ -127,8 +127,16 @@ class Threadpt(Thread):
                                                          pay, self.aux_params_to_rebuild_req[4],
                                                          self.aux_params_to_rebuild_req[5])
                     time.sleep(self.delay)
-                    if test[0] == True and abs(int(test[2]) - int(self.original_request.headers.get('content-length'))) > 100 and int(test[2]) != 0:
-                        print 'Path Traversal on: ' + test[1]
+                    if test[0] == True and abs(int(test[2]) - int(self.original_request.headers.get('content-length'))) > 1000 and int(test[2]) > 20:
+                        print '[+][+][+][+][+][+][+][+][+][+][+]'
+                        print 'PATH TRAVERSAL FOUND'
+                        print 'PATH: ' + self.path
+                        print 'REQUEST: ' + self.reqtype
+                        print 'PARAM: ' + self.param_exploited
+                        print 'Content-Length Payload Request: ' + str(int(test[2]))
+                        print 'Content-Length Original Request: ' + self.original_request.headers.get(
+                            'content-length')
+                        print 'ON: ' + test[1]
 
             else:
                 if self.reqtype == 'POST':
@@ -141,9 +149,16 @@ class Threadpt(Thread):
                                                                         self.aux_params_to_rebuild_req[5])
                         time.sleep(self.delay)
                         if test[0] == True and abs(
-                                int(test[2]) - int(self.original_request.headers.get('content-length'))) > 100 and int(
-                                test[2]) != 0:
-                            print 'Path Traversal on: ' + test[1]
+                                int(test[2]) - int(self.original_request.headers.get('content-length'))) > 1000 and int(test[2]) > 20:
+                            print '[+][+][+][+][+][+][+][+][+][+][+]'
+                            print 'PATH TRAVERSAL FOUND'
+                            print 'PATH: ' + self.path
+                            print 'REQUEST: ' + self.reqtype
+                            print 'PARAM: ' + self.param_exploited
+                            print 'Content-Length Payload Request: ' + str(int(test[2]))
+                            print 'Content-Length Original Request: ' + self.original_request.headers.get(
+                                'content-length')
+                            print 'ON: ' + test[1]
 
                 else:
                     if self.reqtype == 'GET':
@@ -157,16 +172,16 @@ class Threadpt(Thread):
                                                                              self.aux_params_to_rebuild_req[6])
                             time.sleep(self.delay)
                             if test[0] == True and abs(int(test[2]) - int(
-                                    self.original_request.headers.get('content-length'))) > 100 and int(test[2]) != 0:
+                                    self.original_request.headers.get('content-length'))) > 1000 and int(test[2]) > 20:
                                 print '[+][+][+][+][+][+][+][+][+][+][+]'
-                                print int(test[2])
-                                print self.original_request.headers.get('content-length')
                                 print 'PATH TRAVERSAL FOUND'
                                 print 'PATH: ' + self.path
                                 print 'REQUEST: ' + self.reqtype
                                 print 'PARAM: ' + self.param_exploited
+                                print 'Content-Length Payload Request: ' + str(int(test[2]))
+                                print 'Content-Length Original Request: ' + self.original_request.headers.get(
+                                    'content-length')
                                 print 'ON: ' + test[1]
-                                print '[+][+][+][+][+][+][+][+][+][+][+]'
 
         if self.os == 'b' or self.os == 'l':
             if self.reqtype == 'multi_POST':
@@ -177,9 +192,16 @@ class Threadpt(Thread):
                                                          self.aux_params_to_rebuild_req[5])
                     time.sleep(self.delay)
                     if test[0] == True and abs(
-                            int(test[2]) - int(self.original_request.headers.get('content-length'))) > 100 and int(
-                            test[2]) != 0:
-                        print 'Path Traversal on: ' + test[1]
+                            int(test[2]) - int(self.original_request.headers.get('content-length'))) > 1000 and int(test[2]) > 20:
+                        print '[+][+][+][+][+][+][+][+][+][+][+]'
+                        print 'PATH TRAVERSAL FOUND'
+                        print 'PATH: ' + self.path
+                        print 'REQUEST: ' + self.reqtype
+                        print 'PARAM: ' + self.param_exploited
+                        print 'Content-Length Payload Request: ' + str(int(test[2]))
+                        print 'Content-Length Original Request: ' + self.original_request.headers.get(
+                            'content-length')
+                        print 'ON: ' + test[1]
 
             else:
                 if self.reqtype == 'POST':
@@ -192,9 +214,16 @@ class Threadpt(Thread):
                                                                         self.aux_params_to_rebuild_req[5])
                         time.sleep(self.delay)
                         if test[0] == True and abs(
-                                int(test[2]) - int(self.original_request.headers.get('content-length'))) > 100 and int(
-                                test[2]) != 0:
-                            print 'Path Traversal on: ' + test[1]
+                                int(test[2]) - int(self.original_request.headers.get('content-length'))) > 1000 and int(test[2]) > 20:
+                            print '[+][+][+][+][+][+][+][+][+][+][+]'
+                            print 'PATH TRAVERSAL FOUND'
+                            print 'PATH: ' + self.path
+                            print 'REQUEST: ' + self.reqtype
+                            print 'PARAM: ' + self.param_exploited
+                            print 'Content-Length Payload Request: ' + str(int(test[2]))
+                            print 'Content-Length Original Request: ' + self.original_request.headers.get(
+                                'content-length')
+                            print 'ON: ' + test[1]
 
                 else:
                     if self.reqtype == 'GET':
@@ -208,6 +237,14 @@ class Threadpt(Thread):
                                                                              self.aux_params_to_rebuild_req[6])
                             time.sleep(self.delay)
                             if test[0] == True and abs(int(test[2]) - int(
-                                    self.original_request.headers.get('content-length'))) > 100 and int(test[2]) != 0:
-                                print 'Path Traversal on: ' + test[1]
+                                    self.original_request.headers.get('content-length'))) > 1000 and int(test[2]) > 20:
+                                print '[+][+][+][+][+][+][+][+][+][+][+]'
+                                print 'PATH TRAVERSAL FOUND'
+                                print 'PATH: ' + self.path
+                                print 'REQUEST: ' + self.reqtype
+                                print 'PARAM: ' + self.param_exploited
+                                print 'Content-Length Payload Request: ' + str(int(test[2]))
+                                print 'Content-Length Original Request: ' + self.original_request.headers.get(
+                                    'content-length')
+                                print 'ON: ' + test[1]
         print '--------------------------------------------------------------------------------------------------------'
