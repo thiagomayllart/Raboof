@@ -122,6 +122,8 @@ def HTTP_request():
                     if payloadstype == 'pt':
                         PathTraversal.multi_post_call(path, headers, payloadslist, boundaries, original_request, os, dt)
 
+                    if payloadstype == 'de':
+                        DynamicExecution.multi_post_call(path, headers, payloadslist, boundaries, original_request)
 
                 else:
                     post_params = data.split('&')
@@ -134,6 +136,9 @@ def HTTP_request():
                     if payloadstype == 'pt':
                         PathTraversal.common_post_call(path, headers, payloadslist, post_params, original_request, os, dt)
 
+                    if payloadstype == 'de':
+                        DynamicExecution.post_call(path, headers, payloadslist, boundaries, original_request)
+
             if method == 'GET':
                 if '?' in path:
                     original_request = get_call(path, headers)
@@ -145,6 +150,9 @@ def HTTP_request():
 
                     if payloadstype == 'pt':
                         PathTraversal.get_call(path, headers, data, payloadslist, original_request, os, dt)
+
+                    if payloadstype == 'de':
+                        DynamicExecution.get_call(path, headers, payloadslist, boundaries, original_request)
 
                 else:
                     #no params to test
