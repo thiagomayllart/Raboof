@@ -5,6 +5,7 @@ import PayloadGenerator
 import ParameterPollution
 import SOAPInjection
 import PathTraversal
+import DynamicExecution
 
 requests_file = None
 arr = None
@@ -137,7 +138,7 @@ def HTTP_request():
                         PathTraversal.common_post_call(path, headers, payloadslist, post_params, original_request, os, dt)
 
                     if payloadstype == 'de':
-                        DynamicExecution.post_call(path, headers, payloadslist, boundaries, original_request)
+                        DynamicExecution.common_post_call(path, headers, payloadslist, post_params, original_request)
 
             if method == 'GET':
                 if '?' in path:
@@ -152,7 +153,7 @@ def HTTP_request():
                         PathTraversal.get_call(path, headers, data, payloadslist, original_request, os, dt)
 
                     if payloadstype == 'de':
-                        DynamicExecution.get_call(path, headers, payloadslist, boundaries, original_request)
+                        DynamicExecution.get_call(path, headers, data, payloadslist, original_request)
 
                 else:
                     #no params to test

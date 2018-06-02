@@ -2,6 +2,40 @@ import HTTPRequester
 from threading import Thread
 import PathTraversal
 import time
+import DynamicExecution
+
+class Threadde1(Thread):
+    def __init__(self, path, headers, lines, param, payload, i, req_type, original_request, checkstring):
+        Thread.__init__(self)
+        self.path = path
+        self.headers = headers
+        self.lines = lines
+        self.param_exploited = param
+        self.original_request = original_request
+        self.reqtype = req_type
+        self.payload = payload
+        self.checkstring = checkstring
+        self.i = i
+
+    def run(self):
+        response = ''
+        result = []
+        if self.reqtype == 'multi_POST':
+            result = DynamicExecution.multi_post_call_test_reply(self.path, self.headers, self.lines, self.param_exploited, self.payload, self.i, self.original_request, self.checkstring)
+        else:
+            if self.reqtype == 'POST' :
+                result = DynamicExecution.common_post_call_test_reply(self.path, self.headers, self.lines, self.param_exploited, self.payload, self.i, self.original_request, self.checkstring)
+            else:
+                if self.reqtype == 'GET':
+                    result = DynamicExecution.get_call_test_reply(self.path, self.headers, self.lines, self.param_exploited, self.payload, self.i, self.original_request, self.checkstring)
+        if result[0] != False:
+            print '[+] DYNAMIC EXECUTION FOUND: '
+            print 'Path: ' + self.path
+            print 'Location: '+ self.param_exploited
+            print 'Request Type: '+ self.reqtype
+            for x in self.headers:
+                print x + ': ' + self.headers.get(x)
+            print "----------------------------------------------------------------------------------------------\n"
 
 class Threadpp(Thread):
     def __init__(self, path, data, headers, original_request, param_exploited, reqtype, gibberish_data, gibberish_numb_data):
