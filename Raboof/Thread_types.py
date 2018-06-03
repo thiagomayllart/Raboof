@@ -5,7 +5,7 @@ import time
 import DynamicExecution
 
 class Threadde1(Thread):
-    def __init__(self, path, headers, lines, param, payload, i, req_type, original_request, checkstring):
+    def __init__(self, path, headers, lines, param, payload, i, req_type, original_request, checkstring, url):
         Thread.__init__(self)
         self.path = path
         self.headers = headers
@@ -15,6 +15,7 @@ class Threadde1(Thread):
         self.reqtype = req_type
         self.payload = payload
         self.checkstring = checkstring
+        self.url = url
         self.i = i
 
     def run(self):
@@ -27,12 +28,13 @@ class Threadde1(Thread):
                 result = DynamicExecution.common_post_call_test_reply(self.path, self.headers, self.lines, self.param_exploited, self.payload, self.i, self.original_request, self.checkstring)
             else:
                 if self.reqtype == 'GET':
-                    result = DynamicExecution.get_call_test_reply(self.path, self.headers, self.lines, self.param_exploited, self.payload, self.i, self.original_request, self.checkstring)
+                    result = DynamicExecution.get_call_test_reply(self.url, self.headers, self.lines, self.param_exploited, self.payload, self.i, self.original_request, self.checkstring)
         if result[0] != False:
             print '[+] DYNAMIC EXECUTION FOUND: '
-            print 'Path: ' + self.path
-            print 'Location: '+ self.param_exploited
-            print 'Request Type: '+ self.reqtype
+            print '[+]PATH: ' + self.path
+            print '[+]LOCATION: '+ self.lines[0] + "=" + self.lines[1]
+            print '[+]PAYLOAD: ' + self.payload
+            print '[+]REQUEST TYPE: '+ self.reqtype
             for x in self.headers:
                 print x + ': ' + self.headers.get(x)
             print "----------------------------------------------------------------------------------------------\n"

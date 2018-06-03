@@ -18,6 +18,7 @@ def multi_post_call_test_reply(path, headers, lines, boundaries, payload, i, bef
         else:
             return [False, None, None]
     except Exception as e:
+        print e
         return [False, None, None]
 
 def multi_post_call(path, headers, payloadslist, boundaries, original_request, os, dt):
@@ -66,6 +67,7 @@ def common_post_call_test_reply(path, headers, vars, post_params, payload, i, be
         else:
             return [False, None, None]
     except Exception as e:
+        print e
         return [False, None, None]
 
 def common_post_call(path, headers, payloadslist, post_params, original_request, os, dt):
@@ -115,6 +117,7 @@ def get_call_test_reply(path, headers, var, params, payload, i, before_or_after,
         else:
             return [False, None, None]
     except Exception as e:
+        print e
         return [False, None, None]
 
 def get_call(path, headers, data, payloadslist, original_request, os, dt):

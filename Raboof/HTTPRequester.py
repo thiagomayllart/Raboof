@@ -6,6 +6,7 @@ import ParameterPollution
 import SOAPInjection
 import PathTraversal
 import DynamicExecution
+import urllib
 
 requests_file = None
 arr = None
@@ -35,6 +36,8 @@ def set_params(option1, max_threads1, delay1, os1, dt1):
 
 def get_call(path, headers):
     try:
+        #ua = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:60.0) Gecko/20100101 Firefox/60.0'}
+        #headers.update(ua)
         req = urllib2.Request(path, headers=headers)
         response = urllib2.urlopen(req)
         return response
@@ -44,6 +47,8 @@ def get_call(path, headers):
 
 def post_call(path, data, headers):
     try:
+        #ua = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:60.0) Gecko/20100101 Firefox/60.0'}
+        #headers.update(ua)
         req = urllib2.Request(path, data=data, headers=headers)
         response = urllib2.urlopen(req)
         return response
@@ -89,7 +94,7 @@ def HTTP_request():
 
     for request in requests:
 
-        path = find_between(request, '<url><![CDATA[', ']]></url>')
+        path = urllib.unquote(find_between(request, '<url><![CDATA[', ']]></url>'))
         raw_request = find_between(request, '"false"><![CDATA[', ']]></request>')
         raw_header, data = raw_request.split('\n\n', 1)
         lines = raw_header.split('\n')

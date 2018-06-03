@@ -71,7 +71,7 @@ def dynamic_execution_gen():
     for i in dynamic_ex__page_inj_payload:
         paylist_first_test.append(urllib.quote_plus(i))
         paylist_first_test.append(urllib.quote_plus(urllib.quote_plus(i)))
-        paylist_first_test.append(i.replace(';', semicolonutf16).replace(':', colonutf16).replace('.', dotutf16))
+        paylist_first_test.append(i.replace(';', semicolonutf16).replace(':', colonutf16).replace('.', dotutf16).replace(' ', '+'))
     for i in dynamic_ex_delay_call_payload:
         paylist_second_test.append(urllib.quote_plus(i))
         paylist_second_test.append(urllib.quote_plus(urllib.quote_plus(i)))
