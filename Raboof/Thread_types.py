@@ -4,6 +4,43 @@ import PathTraversal
 import time
 import DynamicExecution
 
+class Threadde2(Thread):
+    def __init__(self, path, headers, lines, param, payload, i, req_type, original_request, checkstring, url):
+        Thread.__init__(self)
+        self.path = path
+        self.headers = headers
+        self.lines = lines
+        self.param_exploited = param
+        self.original_request = original_request
+        self.reqtype = req_type
+        self.payload = payload
+        self.checkstring = checkstring
+        self.url = url
+        self.i = i
+
+    def run(self):
+        response = ''
+        result = []
+        if self.reqtype == 'multi_POST':
+            result = DynamicExecution.multi_post_call_test_delay(self.path, self.headers, self.lines, self.param_exploited, self.payload, self.i, self.original_request, self.checkstring)
+        else:
+            if self.reqtype == 'POST' :
+                result = DynamicExecution.common_post_call_test_delay(self.path, self.headers, self.lines, self.param_exploited, self.payload, self.i, self.original_request, self.checkstring)
+            else:
+                if self.reqtype == 'GET':
+                    result = DynamicExecution.get_call_test_delay(self.url, self.headers, self.lines, self.param_exploited, self.payload, self.i, self.original_request, self.checkstring)
+        if result[0] != False:
+            print '[+] DYNAMIC EXECUTION FOUND: '
+            print '[+] LOOPBACK FOUND'
+            print '[+]PATH: ' + self.path
+            print '[+]LOCATION: '+ self.lines[0] + "=" + self.lines[1]
+            print '[+]PAYLOAD: ' + self.payload
+            print '[+]REQUEST TYPE: '+ self.reqtype
+            for x in self.headers:
+                print x + ': ' + self.headers.get(x)
+            print "----------------------------------------------------------------------------------------------\n"
+
+
 class Threadde1(Thread):
     def __init__(self, path, headers, lines, param, payload, i, req_type, original_request, checkstring, url):
         Thread.__init__(self)
@@ -31,6 +68,7 @@ class Threadde1(Thread):
                     result = DynamicExecution.get_call_test_reply(self.url, self.headers, self.lines, self.param_exploited, self.payload, self.i, self.original_request, self.checkstring)
         if result[0] != False:
             print '[+] DYNAMIC EXECUTION FOUND: '
+            print '[+] PAGE INJECTED'
             print '[+]PATH: ' + self.path
             print '[+]LOCATION: '+ self.lines[0] + "=" + self.lines[1]
             print '[+]PAYLOAD: ' + self.payload
