@@ -145,7 +145,7 @@ def HTTP_request():
                         SOAPInjection.get_call(path, headers, data, payloadslist, original_request)
 
                     if payloadslist == 'ti':
-                        TemplateInjection.multi_post_call(path, headers, payloadslist, original_request)
+                        TemplateInjection.multi_post_call(path, headers, data, payloadslist, original_request)
 
                 else:
                     #no params to test
