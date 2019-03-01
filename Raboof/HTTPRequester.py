@@ -4,7 +4,7 @@ import time
 import PayloadGenerator
 import ParameterPollution
 import SOAPInjection
-import PathTraversal
+import TemplateInjection
 
 requests_file = None
 arr = None
@@ -119,8 +119,9 @@ def HTTP_request():
                     if payloadstype == 'si':
                         SOAPInjection.multi_post_call(path, headers, payloadslist, boundaries, original_request)
 
-                    if payloadstype == 'pt':
-                        PathTraversal.multi_post_call(path, headers, payloadslist, boundaries, original_request, os, dt)
+
+                    if payloadslist == 'ti':
+                        TemplateInjection.multi_post_call(path, headers, payloadslist, boundaries, original_request)
 
 
                 else:
@@ -131,8 +132,8 @@ def HTTP_request():
                     if payloadstype == 'si':
                         SOAPInjection.common_post_call(path, headers, payloadslist, post_params, original_request)
 
-                    if payloadstype == 'pt':
-                        PathTraversal.common_post_call(path, headers, payloadslist, post_params, original_request, os, dt)
+                    if payloadslist == 'ti':
+                        TemplateInjection.multi_post_call(path, headers, payloadslist, post_params, original_request)
 
             if method == 'GET':
                 if '?' in path:
@@ -143,8 +144,8 @@ def HTTP_request():
                     if payloadstype == 'si':
                         SOAPInjection.get_call(path, headers, data, payloadslist, original_request)
 
-                    if payloadstype == 'pt':
-                        PathTraversal.get_call(path, headers, data, payloadslist, original_request, os, dt)
+                    if payloadslist == 'ti':
+                        TemplateInjection.multi_post_call(path, headers, payloadslist, original_request)
 
                 else:
                     #no params to test
