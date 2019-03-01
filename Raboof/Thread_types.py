@@ -1,7 +1,25 @@
 import HTTPRequester
 from threading import Thread
-import PathTraversal
 import time
+
+class Threadti(Thread):
+    def __init__(self, path, headers, data_pay, original_request, param_exploited, reqtype, pay_path, template_inj_type_test, list_regions):
+        Thread.__init__(self)
+        if reqtype == 'POST':
+            self.pay_response = HTTPRequester.post_call(path, data_pay, headers)
+        else:
+            self.pay_response = HTTPRequester.get_call(pay_path, headers)
+        self.path = path
+        self.headers = headers
+        self.original_request = original_request
+        self.param_exploited = param_exploited
+        self.data_pay = data_pay
+        self.template_inj_test = template_inj_type_test
+        self.reqtype = reqtype
+        self.list_regions = list_regions
+
+    def run(self):
+        pass
 
 class Threadpp(Thread):
     def __init__(self, path, data, headers, original_request, param_exploited, reqtype, gibberish_data, gibberish_numb_data):
@@ -91,160 +109,51 @@ class Threadsi(Thread):
             ': ' + self.headers.get(x)
         print "----------------------------------------------------------------------------------------------\n"
 
-class Threadpt(Thread):
-    def __init__(self, path, headers, prob_path_trav_before, prob_path_trav_after, original_request, param_exploited,
-                 reqtype, windows_payloads, linux_payloads, os, delay, aux_params_to_rebuild_req):
+class Threadsi(Thread):
+    def __init__(self, path, headers, data_pay, data_counter_pay, original_request, param_exploited, reqtype, pay_path, counter_pay_path):
         Thread.__init__(self)
+        if reqtype == 'POST':
+            self.pay_response = HTTPRequester.post_call(path, data_pay, headers)
+            self.counter_pay_response = HTTPRequester.post_call(path, data_counter_pay, headers)
+        else:
+            self.pay_response = HTTPRequester.get_call(pay_path, headers)
+            self.counter_pay_response = HTTPRequester.get_call(counter_pay_path, headers)
         self.path = path
         self.headers = headers
         self.original_request = original_request
         self.param_exploited = param_exploited
+        self.data_pay = data_pay
+        self.data_counter_pay = data_counter_pay
         self.reqtype = reqtype
-        self.prob_path_trav_before = prob_path_trav_before
-        self.prob_path_trav_after = prob_path_trav_after
-        self.aux_params_to_rebuild_req = aux_params_to_rebuild_req
-        self.windows_payloads = windows_payloads
-        self.linux_payloads = linux_payloads
-        self.os = os
-        self.delay = delay
 
     def run(self):
-        print 'PARAMETER EXPLOITABLE FOUND'
-        print 'PATH: ' + self.path
-        print 'PARAM: ' + self.param_exploited
-        print 'PAYLOADS RETURNED 200 OK: '
-        for pay in self.prob_path_trav_after:
-            print pay
-        for pay in self.prob_path_trav_before:
-            print pay
-        print '[+][+][+][+][+][+][+][+][+][+][+][+][+][+][+][+][+][+][+][+][+][+][+][+][+][+][+][+][+][+][+][+]'
-        print 'PROBING COMMON FILE PATHS'
-        if self.os == 'b' or self.os == 'w':
-            if self.reqtype == 'multi_POST':
-                for pay in self.windows_payloads:
-                    test = PathTraversal.multi_post_call_test_reply(self.aux_params_to_rebuild_req[0], self.aux_params_to_rebuild_req[1],
-                                                     self.aux_params_to_rebuild_req[2], self.aux_params_to_rebuild_req[3],
-                                                         pay, self.aux_params_to_rebuild_req[4],
-                                                         self.aux_params_to_rebuild_req[5])
-                    time.sleep(self.delay)
-                    if test[0] == True and abs(int(test[2]) - int(self.original_request.headers.get('content-length'))) > 1000 and int(test[2]) > 20:
-                        print '[+][+][+][+][+][+][+][+][+][+][+]'
-                        print 'PATH TRAVERSAL FOUND'
-                        print 'PATH: ' + self.path
-                        print 'REQUEST: ' + self.reqtype
-                        print 'PARAM: ' + self.param_exploited
-                        print 'Content-Length Payload Request: ' + str(int(test[2]))
-                        print 'Content-Length Original Request: ' + self.original_request.headers.get(
-                            'content-length')
-                        print 'ON: ' + test[1]
+        response = ''
+        if self.pay_response.getcode() != self.counter_pay_response.getcode():
+            print 'SOAP INJECTION: '
+            print 'HTTP REPLY CODE DIVERGED: '
+            self.message_function()
+
+        else:
+            if self.pay_response.headers.get('content-length') != self.counter_pay_response.headers.get('content-length'):
+                print 'SOAP INJECTION: '
+                print 'HTTP CONTENT-LENGTH CODE DIVERGED: '
+                self.message_function()
 
             else:
-                if self.reqtype == 'POST':
-                    for pay in self.windows_payloads:
-                        test = PathTraversal.common_post_call_test_reply(self.aux_params_to_rebuild_req[0],
-                                                                        self.aux_params_to_rebuild_req[1],
-                                                                        self.aux_params_to_rebuild_req[2],
-                                                                        self.aux_params_to_rebuild_req[3],
-                                                                        pay, self.aux_params_to_rebuild_req[4],
-                                                                        self.aux_params_to_rebuild_req[5])
-                        time.sleep(self.delay)
-                        if test[0] == True and abs(
-                                int(test[2]) - int(self.original_request.headers.get('content-length'))) > 1000 and int(test[2]) > 20:
-                            print '[+][+][+][+][+][+][+][+][+][+][+]'
-                            print 'PATH TRAVERSAL FOUND'
-                            print 'PATH: ' + self.path
-                            print 'REQUEST: ' + self.reqtype
-                            print 'PARAM: ' + self.param_exploited
-                            print 'Content-Length Payload Request: ' + str(int(test[2]))
-                            print 'Content-Length Original Request: ' + self.original_request.headers.get(
-                                'content-length')
-                            print 'ON: ' + test[1]
+                #probably not exploitable
+                pass
 
-                else:
-                    if self.reqtype == 'GET':
-                        for pay in self.windows_payloads:
-                            test = PathTraversal.get_call_test_reply(self.aux_params_to_rebuild_req[0],
-                                                                             self.aux_params_to_rebuild_req[1],
-                                                                             self.aux_params_to_rebuild_req[2],
-                                                                             self.aux_params_to_rebuild_req[3],
-                                                                             pay, self.aux_params_to_rebuild_req[4],
-                                                                             self.aux_params_to_rebuild_req[5],
-                                                                             self.aux_params_to_rebuild_req[6])
-                            time.sleep(self.delay)
-                            if test[0] == True and abs(int(test[2]) - int(
-                                    self.original_request.headers.get('content-length'))) > 1000 and int(test[2]) > 20:
-                                print '[+][+][+][+][+][+][+][+][+][+][+]'
-                                print 'PATH TRAVERSAL FOUND'
-                                print 'PATH: ' + self.path
-                                print 'REQUEST: ' + self.reqtype
-                                print 'PARAM: ' + self.param_exploited
-                                print 'Content-Length Payload Request: ' + str(int(test[2]))
-                                print 'Content-Length Original Request: ' + self.original_request.headers.get(
-                                    'content-length')
-                                print 'ON: ' + test[1]
-
-        if self.os == 'b' or self.os == 'l':
-            if self.reqtype == 'multi_POST':
-                for pay in self.linux_payloads:
-                    test = PathTraversal.multi_post_call_test_reply(self.aux_params_to_rebuild_req[0], self.aux_params_to_rebuild_req[1],
-                                                     self.aux_params_to_rebuild_req[2], self.aux_params_to_rebuild_req[3],
-                                                         pay, self.aux_params_to_rebuild_req[4],
-                                                         self.aux_params_to_rebuild_req[5])
-                    time.sleep(self.delay)
-                    if test[0] == True and abs(
-                            int(test[2]) - int(self.original_request.headers.get('content-length'))) > 1000 and int(test[2]) > 20:
-                        print '[+][+][+][+][+][+][+][+][+][+][+]'
-                        print 'PATH TRAVERSAL FOUND'
-                        print 'PATH: ' + self.path
-                        print 'REQUEST: ' + self.reqtype
-                        print 'PARAM: ' + self.param_exploited
-                        print 'Content-Length Payload Request: ' + str(int(test[2]))
-                        print 'Content-Length Original Request: ' + self.original_request.headers.get(
-                            'content-length')
-                        print 'ON: ' + test[1]
-
-            else:
-                if self.reqtype == 'POST':
-                    for pay in self.windows_payloads:
-                        test = PathTraversal.common_post_call_test_reply(self.aux_params_to_rebuild_req[0],
-                                                                        self.aux_params_to_rebuild_req[1],
-                                                                        self.aux_params_to_rebuild_req[2],
-                                                                        self.aux_params_to_rebuild_req[3],
-                                                                        pay, self.aux_params_to_rebuild_req[4],
-                                                                        self.aux_params_to_rebuild_req[5])
-                        time.sleep(self.delay)
-                        if test[0] == True and abs(
-                                int(test[2]) - int(self.original_request.headers.get('content-length'))) > 1000 and int(test[2]) > 20:
-                            print '[+][+][+][+][+][+][+][+][+][+][+]'
-                            print 'PATH TRAVERSAL FOUND'
-                            print 'PATH: ' + self.path
-                            print 'REQUEST: ' + self.reqtype
-                            print 'PARAM: ' + self.param_exploited
-                            print 'Content-Length Payload Request: ' + str(int(test[2]))
-                            print 'Content-Length Original Request: ' + self.original_request.headers.get(
-                                'content-length')
-                            print 'ON: ' + test[1]
-
-                else:
-                    if self.reqtype == 'GET':
-                        for pay in self.windows_payloads:
-                            test = PathTraversal.get_call_test_reply(self.aux_params_to_rebuild_req[0],
-                                                                             self.aux_params_to_rebuild_req[1],
-                                                                             self.aux_params_to_rebuild_req[2],
-                                                                             self.aux_params_to_rebuild_req[3],
-                                                                             pay, self.aux_params_to_rebuild_req[4],
-                                                                             self.aux_params_to_rebuild_req[5],
-                                                                             self.aux_params_to_rebuild_req[6])
-                            time.sleep(self.delay)
-                            if test[0] == True and abs(int(test[2]) - int(
-                                    self.original_request.headers.get('content-length'))) > 1000 and int(test[2]) > 20:
-                                print '[+][+][+][+][+][+][+][+][+][+][+]'
-                                print 'PATH TRAVERSAL FOUND'
-                                print 'PATH: ' + self.path
-                                print 'REQUEST: ' + self.reqtype
-                                print 'PARAM: ' + self.param_exploited
-                                print 'Content-Length Payload Request: ' + str(int(test[2]))
-                                print 'Content-Length Original Request: ' + self.original_request.headers.get(
-                                    'content-length')
-                                print 'ON: ' + test[1]
-        print '--------------------------------------------------------------------------------------------------------'
+    def message_function(self):
+        print 'HTTP REPLY CODE : ' + self.pay_response.getcode + ' and ' + self.counter_pay_response.getcode()
+        print 'HTTP CONTENT-LENGTH ' + self.pay_response.headers.get('content-length') + ' and ' + \
+              self.counter_pay_response.headers.get('content-length')
+        print 'LOCATION: ' + self.param_exploited
+        print 'REQUEST TYPE: ' + self.reqtype
+        print 'PRINTING REQUEST: '
+        print 'PATH :' + self.path
+        print 'FIRST PAYLOAD DATA: ' + self.data_pay
+        print 'SECOND PAYLOAD DATA: ' + self.data_counter_pay
+        for x in self.headers:
+            print x
+            ': ' + self.headers.get(x)
+        print "----------------------------------------------------------------------------------------------\n"
