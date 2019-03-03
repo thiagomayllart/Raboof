@@ -19,7 +19,32 @@ class Threadti(Thread):
         self.list_regions = list_regions
 
     def run(self):
-        pass
+        for regions in self.list_regions:
+                out_payload = HTTPRequester.find_between(self.pay_response.read(), regions[0], regions[1])
+                if self.template_inj_test == 0:
+                    if '49' in out_payload:
+                        print '[+] POINT OF TEMPLATE INJECTION FOUND'
+                        print '[+] LOCATION: ' + self.param_exploited
+                        print '[+] OUTPUT RESULT: ' + out_payload
+                        print '[+] REQUEST TYPE: ' + self.reqtype
+                        print '[+] PRINTING REQUEST: '
+                        print self.path
+                        print self.data_pay
+                        for x in self.headers:
+                            print x + ': ' + self.headers.get(x)
+                        print "----------------------------------------------------------------------------------------------\n"
+                if self.template_inj_test == 1:
+                    if '7777777' in out_payload:
+                        print '[+] POINT OF TEMPLATE INJECTION FOUND'
+                        print '[+] LOCATION: ' + self.param_exploited
+                        print '[+] OUTPUT RESULT: ' + out_payload
+                        print '[+] REQUEST TYPE: ' + self.reqtype
+                        print '[+] PRINTING REQUEST: '
+                        print self.path
+                        print self.data_pay
+                        for x in self.headers:
+                            print x + ': ' + self.headers.get(x)
+                        print "----------------------------------------------------------------------------------------------\n"
 
 class Threadpp(Thread):
     def __init__(self, path, data, headers, original_request, param_exploited, reqtype, gibberish_data, gibberish_numb_data):
