@@ -81,7 +81,7 @@ def soap_injection_payload_gen():
          convert_to_unicode(soap_inj_close_comment)])
 
 def template_injection_payload_gen():
-    global template_injection_test_type1,template_injection_test_type2
+    global template_injection_test_type1,template_injection_test_type2, paylist
     paylist = []
-    paylist.append([template_injection_test_type1])
-    paylist.append([template_injection_test_type2])
+    paylist.append(template_injection_test_type1)
+    paylist.append(template_injection_test_type2)

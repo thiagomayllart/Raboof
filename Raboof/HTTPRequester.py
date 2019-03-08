@@ -90,8 +90,8 @@ def HTTP_request():
 
         path = find_between(request, '<url><![CDATA[', ']]></url>')
         raw_request = find_between(request, '"false"><![CDATA[', ']]></request>')
-        raw_header, data = raw_request.split('\n\n', 1)
-        lines = raw_header.split('\n')
+        raw_header, data = raw_request.split('\r\n\r\n', 1)
+        lines = raw_header.split('\r\n')
         method = ''
         if 'POST' in lines[0]:
             method = 'POST'
@@ -133,7 +133,7 @@ def HTTP_request():
                         SOAPInjection.common_post_call(path, headers, payloadslist, post_params, original_request)
 
                     if payloadslist == 'ti':
-                        TemplateInjection.multi_post_call(path, headers, payloadslist, post_params, original_request)
+                        TemplateInjection.common_post_call(path, headers, payloadslist, post_params, original_request)
 
             if method == 'GET':
                 if '?' in path:
@@ -144,8 +144,8 @@ def HTTP_request():
                     if payloadstype == 'si':
                         SOAPInjection.get_call(path, headers, data, payloadslist, original_request)
 
-                    if payloadslist == 'ti':
-                        TemplateInjection.multi_post_call(path, headers, data, payloadslist, original_request)
+                    if payloadstype == 'ti':
+                        TemplateInjection.get_call(path, headers, data, payloadslist, original_request)
 
                 else:
                     #no params to test

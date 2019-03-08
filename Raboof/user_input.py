@@ -11,11 +11,14 @@ dt = 0
 
 def present():
     global option, os, dt
-    if option == 'ti':
-        print '[+] Testing for Template Injection: '
+    if option == 'so':
+        print '[+] Testing for Soap Injection: '
 
     if option == 'pp':
         print '[+] Testing for HTTP Parameter Pollution '
+
+    if option == 'ti':
+        print '[+] Testing for Template Injection '
 
     print '[+] Testing for HTTP Parameter Pollution '
     print '[+] FILE: ' + str(requests_location)

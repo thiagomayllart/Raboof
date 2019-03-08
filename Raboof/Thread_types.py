@@ -1,6 +1,7 @@
 import HTTPRequester
 from threading import Thread
 import time
+import zlib
 
 class Threadti(Thread):
     def __init__(self, path, headers, data_pay, original_request, param_exploited, reqtype, pay_path, template_inj_type_test, list_regions):
@@ -17,10 +18,14 @@ class Threadti(Thread):
         self.template_inj_test = template_inj_type_test
         self.reqtype = reqtype
         self.list_regions = list_regions
+        self.html = self.pay_response.read()
+        if self.pay_response.headers.get('Content-Encoding') != None:
+            if 'gzip' in self.pay_response.headers.get('Content-Encoding'):
+                self.html = zlib.decompress(self.html, 16 + zlib.MAX_WBITS)
 
     def run(self):
         for regions in self.list_regions:
-                out_payload = HTTPRequester.find_between(self.pay_response.read(), regions[0], regions[1])
+                out_payload = HTTPRequester.find_between(self.html, regions[0], regions[1])
                 if self.template_inj_test == 0:
                     if '49' in out_payload:
                         print '[+] POINT OF TEMPLATE INJECTION FOUND'
