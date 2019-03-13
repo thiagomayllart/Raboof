@@ -20,7 +20,6 @@ def present():
     if option == 'ti':
         print '[+] Testing for Template Injection '
 
-    print '[+] Testing for HTTP Parameter Pollution '
     print '[+] FILE: ' + str(requests_location)
     print '[+] Threads: ' + str(max_threads)
     print '[+] Delay between requests: ' + str(delay)

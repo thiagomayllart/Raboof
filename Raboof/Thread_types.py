@@ -3,6 +3,171 @@ from threading import Thread
 import time
 import zlib
 
+
+class Threadsr(Thread):
+
+
+    def __init__(self, path, headers, payloadslist, params, original_request, reqtype):
+        Thread.__init__(self)
+        self.path = path
+        self.headers = headers
+        self.original_request = original_request
+        self.reqtype = reqtype
+        self.html = self.original_request.read()
+        self.params = params
+        self.payloadslist = payloadslist
+
+        self.search_on_response_java = payloadslist[0]
+        self.search_on_response_csharp = payloadslist[1]
+        self.search_on_header_response = payloadslist[2]
+        self.search_on_content_type = payloadslist[3]
+        self.search_on_response = payloadslist[4]
+
+        if self.original_request.headers.get('Content-Encoding') != None:
+            if 'gzip' in self.original_request.headers.get('Content-Encoding'):
+                self.html = zlib.decompress(self.html, 16 + zlib.MAX_WBITS)
+
+
+    def define_tests(self, payloadslist):
+        global search_on_response_java, search_on_response_csharp, search_on_header_response, search_on_content_type, search_on_response
+        search_on_response_java = payloadslist[0]
+        search_on_response_csharp = payloadslist[1]
+        search_on_header_response = payloadslist[2]
+        search_on_content_type = payloadslist[3]
+        search_on_response = payloadslist[4]
+
+    def run(self):
+        #Analyzing response:
+        found_on_response = []
+        found_on_request_get = []
+        found_on_request_post = []
+        found_on_response_header = []
+        found_on_request_header = []
+        found_on_content_type_req = []
+        found_on_content_type_resp = []
+
+        # Analyzing response:
+        for test in self.search_on_response_java:
+            if test in self.html:
+                found_on_response.append(test)
+        for test in self.search_on_response_csharp:
+            if test in self.html:
+                found_on_response.append(test)
+        for test in self.search_on_header_response:
+            if test in self.html:
+                found_on_response.append(test)
+        for test in self.search_on_response:
+            if test in self.html:
+                found_on_response.append(test)
+
+        #Analyzing response_headers:
+        for test in self.search_on_header_response:
+            for i,j in self.original_request.headers.items():
+                if test in j:
+                    found_on_response_header.append(test)
+
+        #Analyzing response header content-type:
+        if self.original_request.headers.get('Content-Type') != None:
+            for test in self.search_on_content_type:
+                if test in self.original_request.headers.get('Content-Type'):
+                    found_on_content_type_resp.append(test)
+
+        # Analyzing request params:
+        if self.reqtype == 'GET':
+            for test in self.search_on_header_response:
+                if test in self.path:
+                    found_on_request_get.append(test)
+
+        if self.reqtype == 'POST':
+            for test in self.search_on_header_response:
+                if test in self.params:
+                    found_on_request_post.append(test)
+
+        #Analyzing request headers:
+        for test in self.search_on_header_response:
+            for i,j in self.headers.items():
+                if test in j:
+                    found_on_request_header.append(test)
+
+        #Analyzing request Content-Type:
+        if self.headers.get('Content-Type') != None:
+            for test in self.search_on_content_type:
+                if test in self.headers.get('Content-Type'):
+                    found_on_content_type_req.append(test)
+
+        found_anything = 0
+        if self.reqtype == 'GET':
+            if len(found_on_request_get) > 0:
+                found_anything = 1
+                print '[+] Found Serialization Pattern on GET REQUEST Parameters: '
+                print '[+] Patterns: '
+                for i in found_on_request_get:
+                    print i
+            if len(found_on_request_header) > 0:
+                found_anything = 1
+                print '[+] Found Serialization Pattern on GET REQUEST Header: '
+                print '[+] Patterns: '
+                for i in found_on_request_header:
+                    print i
+            if len(found_on_content_type_req) > 0:
+                found_anything = 1
+                print '[+] Found Serialization Pattern on GET REQUEST Content-Type: '
+                print '[+] Patterns: '
+                for i in found_on_content_type_req:
+                    print i
+
+        if self.reqtype == 'POST':
+            if len(found_on_request_post) > 0:
+                found_anything = 1
+                print '[+] Found Serialization Pattern on POST DATA Parameters: '
+                print '[+] Patterns: '
+                for i in found_on_request_post:
+                    print i
+            if len(found_on_request_header) > 0:
+                found_anything = 1
+                print '[+] Found Serialization Pattern on POST REQUEST Header: '
+                print '[+] Patterns: '
+                for i in found_on_request_header:
+                    print i
+            if len(found_on_content_type_req) > 0:
+                found_anything = 1
+                print '[+] Found Serialization Pattern on POST REQUEST Content-Type: '
+                print '[+] Patterns: '
+                for i in found_on_content_type_req:
+                    print i
+
+
+        if len(found_on_response) > 0:
+            found_anything = 1
+            print '[+] Found Serialization Pattern on HTTP Response: '
+            print '[+] Patterns: '
+            for i in found_on_response:
+                print i
+
+        if len(found_on_response_header) > 0:
+            found_anything = 1
+            print '[+] Found Serialization Pattern on HTTP Response Header: '
+            print '[+] Patterns: '
+            for i in found_on_response_header:
+                print i
+
+        if len(found_on_content_type_resp):
+            found_anything = 1
+            print '[+] Found Serialization Pattern on HTTP Response Content-Type: '
+            print '[+] Patterns: '
+            for i in found_on_content_type_resp:
+                print i
+
+        if found_anything == 1:
+            print '[+] REQUEST TYPE: ' + self.reqtype
+            print '[+] PATH: ' + self.path
+            for x in self.headers:
+                print x + ': ' + self.headers.get(x)
+            if self.reqtype == 'POST':
+                print '[+] DATA: ' + self.params
+
+            print "----------------------------------------------------------------------------------------------\n"
+
 class Threadti(Thread):
     def __init__(self, path, headers, data_pay, original_request, param_exploited, reqtype, pay_path, template_inj_type_test, list_regions):
         Thread.__init__(self)

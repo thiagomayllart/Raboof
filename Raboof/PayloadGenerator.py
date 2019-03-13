@@ -22,6 +22,12 @@ nullbytes = ['%00.pdf', '%00.jpg', '%00.png', '%00.jpeg', '%00.mpeg', '%00.mp4',
 template_injection_test_type1 = ['{7*7}', '{{7*7}}']
 template_injection_test_type2 = ['{7*\'7\'}','{{7*\'7\'}}']
 ###################################
+search_on_response_java = ["XMLdecoder", "XStream", "fromXML", "ObjectInputSteam", "readObject", "readObjectNodData", "readResolve", "readExternal", "ObjectInputStream", "readUnshared", "Serializable"]
+search_on_response_csharp = ["TypeNameHandling", "JavaScriptTypeResolver"]
+search_on_header_response = ["ACED0005", "r00", "AAEAAAD/////"]
+search_on_content_type = ["serialize"]
+search_on_response = ["TypeObject", "$type:"]
+###################################
 paylist = None
 
 def convert_to_unicode(payload):
@@ -83,5 +89,24 @@ def soap_injection_payload_gen():
 def template_injection_payload_gen():
     global template_injection_test_type1,template_injection_test_type2, paylist
     paylist = []
-    paylist.append(template_injection_test_type1)
-    paylist.append(template_injection_test_type2)
+    template_injection_test_type1_new = template_injection_test_type1[:]
+    for test in template_injection_test_type1:
+        template_injection_test_type1_new.append(urllib.quote_plus(test))
+        template_injection_test_type1_new.append(urllib.quote_plus(urllib.quote_plus(test)))
+        template_injection_test_type1_new.append(convert_to_unicode(test))
+    paylist.append(template_injection_test_type1_new)
+    template_injection_test_type2_new = template_injection_test_type2[:]
+    for test in template_injection_test_type2:
+        template_injection_test_type2_new.append(urllib.quote_plus(test))
+        template_injection_test_type2_new.append(urllib.quote_plus(urllib.quote_plus(test)))
+        template_injection_test_type2_new.append(convert_to_unicode(test))
+    paylist.append(template_injection_test_type2_new)
+
+def serialize_payload_gen():
+    global search_on_response_java, search_on_response_csharp, search_on_header_response, search_on_content_type, search_on_response, paylist
+    paylist = []
+    paylist.append(search_on_response_java)
+    paylist.append(search_on_response_csharp)
+    paylist.append(search_on_header_response)
+    paylist.append(search_on_content_type)
+    paylist.append(search_on_response)
