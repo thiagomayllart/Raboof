@@ -61,6 +61,8 @@ def payloadslist(option):
         soap_injection_payload_gen()
     if option == 'ti':
         template_injection_payload_gen()
+    if option == 'sr':
+        serialize_payload_gen()
     return paylist
 
 

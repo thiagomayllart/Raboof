@@ -6,6 +6,7 @@ import ParameterPollution
 import SOAPInjection
 import TemplateInjection
 import Serialize
+import OraclePadding
 
 requests_file = None
 arr = None
@@ -120,12 +121,14 @@ def HTTP_request():
                     if payloadstype == 'si':
                         SOAPInjection.multi_post_call(path, headers, payloadslist, boundaries, original_request)
 
-
                     if payloadslist == 'ti':
                         TemplateInjection.multi_post_call(path, headers, payloadslist, boundaries, original_request)
 
                     if payloadslist == 'sr':
                         Serialize.multi_post_call(path, headers, payloadslist, boundaries, original_request)
+
+                    if payloadslist == 'op':
+                        OraclePadding.multi_post_call(path, headers, payloadslist, boundaries, original_request)
 
 
                 else:
@@ -142,6 +145,9 @@ def HTTP_request():
                     if payloadslist == 'sr':
                         Serialize.common_post_call(path, headers, payloadslist, post_params, original_request)
 
+                    if payloadslist == 'op':
+                        OraclePadding.common_post_call(path, headers, payloadslist, post_params, original_request)
+
             if method == 'GET':
                 if '?' in path:
                     original_request = get_call(path, headers)
@@ -156,6 +162,9 @@ def HTTP_request():
 
                     if payloadstype == 'sr':
                         Serialize.get_call(path, headers, data, payloadslist, original_request)
+
+                    if payloadstype == 'op':
+                        OraclePadding.get_call(path, headers, data, payloadslist, original_request)
 
                 else:
                     #no params to test

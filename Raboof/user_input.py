@@ -20,6 +20,12 @@ def present():
     if option == 'ti':
         print '[+] Testing for Template Injection '
 
+    if option == 'sr':
+        print '[+] Testing for Serializing/Deserializing Vulnerability '
+
+    if option == 'op':
+        print '[+] Testing for Oracle Padding Vulnerability '
+
     print '[+] FILE: ' + str(requests_location)
     print '[+] Threads: ' + str(max_threads)
     print '[+] Delay between requests: ' + str(delay)

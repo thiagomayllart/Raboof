@@ -2,7 +2,79 @@ import HTTPRequester
 from threading import Thread
 import time
 import zlib
+import base64
+import sys
 
+class Threadop(Thread):
+
+    def __init__(self, path, headers, payloadslist, params, original_request, reqtype):
+        Thread.__init__(self)
+        self.path = path
+        self.headers = headers
+        self.original_request = original_request
+        self.reqtype = reqtype
+        self.html = self.original_request.read()
+        self.params = params
+        self.payloadslist = payloadslist
+
+        self.found_on_cookie = {}
+
+        if self.original_request.headers.get('Content-Encoding') != None:
+            if 'gzip' in self.original_request.headers.get('Content-Encoding'):
+                self.html = zlib.decompress(self.html, 16 + zlib.MAX_WBITS)
+
+
+    def run(self):
+        #get the cookies
+        found_anything = 0
+        cookies = self.headers.get('Cookie')
+        cookies = cookies.split(";")
+        for cookie in cookies:
+            multiple = 0
+            variable, value = cookie.split("=", 1)
+            original_value = value
+            while self.isBase64(value) and value != "" and value != None:
+                value = base64.b64decode(value)
+            hex_string = self.get_hex(value)
+            bytesize = self.get_byte_size(hex_string)
+            if bytesize != 0:
+                if bytesize % 16 == 0:
+                    found_anything = 1
+                    multiple = 16
+                else:
+                    if bytesize % 8 == 0:
+                        found_anything = 1
+                        multiple = 8
+                if multiple == 16 or multiple == 8:
+                    original_value = original_value+';\033[0m \033[94mmultiple of '+str(multiple)
+                    self.found_on_cookie[cookie] = original_value
+        if found_anything == 1:
+            print "[+] POSSIBLE COOKIE USING CBC CIPHER FOUND"
+            print "[+] PATH: " + self.path
+            print "[+] REQUEST TYPE: " + self.reqtype
+            if self.reqtype == 'POST':
+                print '[+] POST PARAMETERS: ' + self.params
+            print "[+] HEADERS: "
+            for x in self.headers:
+                print x + ': ' + self.headers.get(x)
+            print "[+] Printing Possibly Vulnerable Cookies: "
+            for i,j in self.found_on_cookie.items():
+                print("\033[92m "+i+": "+j+"\n \033[0m")
+
+            print "----------------------------------------------------------------------------------------------\n"
+
+    def get_hex(selfs,s):
+        hex = "".join("{:02x}".format(ord(c)) for c in s)
+        return hex
+
+    def get_byte_size(self, s):
+        return len(s)/2
+
+    def isBase64(self, s):
+        try:
+            return base64.b64encode(base64.b64decode(s)) == s
+        except Exception:
+            return False
 
 class Threadsr(Thread):
 
