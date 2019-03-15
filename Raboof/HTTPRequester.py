@@ -7,6 +7,7 @@ import SOAPInjection
 import TemplateInjection
 import Serialize
 import OraclePadding
+import XXE
 
 requests_file = None
 arr = None
@@ -130,6 +131,9 @@ def HTTP_request():
                     if payloadslist == 'op':
                         OraclePadding.multi_post_call(path, headers, payloadslist, boundaries, original_request)
 
+                    if payloadslist == 'xxe':
+                        XXE.multi_post_call(path, headers, payloadslist, boundaries, original_request)
+
 
                 else:
                     post_params = data.split('&')
@@ -148,6 +152,9 @@ def HTTP_request():
                     if payloadslist == 'op':
                         OraclePadding.common_post_call(path, headers, payloadslist, post_params, original_request)
 
+                    if payloadslist == 'xxe':
+                        XXE.common_post_call(path, headers, payloadslist, post_params, original_request)
+
             if method == 'GET':
                 if '?' in path:
                     original_request = get_call(path, headers)
@@ -165,6 +172,9 @@ def HTTP_request():
 
                     if payloadstype == 'op':
                         OraclePadding.get_call(path, headers, data, payloadslist, original_request)
+
+                    if payloadslist == 'xxe':
+                        XXE.get_call(path, headers, data, payloadslist, original_request)
 
                 else:
                     #no params to test

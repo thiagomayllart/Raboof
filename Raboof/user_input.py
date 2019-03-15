@@ -26,6 +26,9 @@ def present():
     if option == 'op':
         print '[+] Testing for Oracle Padding Vulnerability '
 
+    if option == 'xxe':
+        print '[+] Testing for XML External Entity'
+
     print '[+] FILE: ' + str(requests_location)
     print '[+] Threads: ' + str(max_threads)
     print '[+] Delay between requests: ' + str(delay)
