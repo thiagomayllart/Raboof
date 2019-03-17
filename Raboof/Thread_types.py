@@ -48,7 +48,7 @@ class Threadxxe(Thread):
         req_test = ""
         found_anything = 0
         found_xxe = 0
-        if code_status_org[0] == '2' or code_status_org[0] == '3':
+        if code_status_org[0] == '2' or code_status_org[0] == '3' or code_status_org[0] == '4':
             new_headers.update({'Content-type': 'application/xml'})
             if 'POST-multi' in self.reqtype:
                 pass
