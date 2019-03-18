@@ -122,16 +122,16 @@ def HTTP_request():
                     if payloadstype == 'si':
                         SOAPInjection.multi_post_call(path, headers, payloadslist, boundaries, original_request)
 
-                    if payloadslist == 'ti':
+                    if payloadstype == 'ti':
                         TemplateInjection.multi_post_call(path, headers, payloadslist, boundaries, original_request)
 
-                    if payloadslist == 'sr':
+                    if payloadstype == 'sr':
                         Serialize.multi_post_call(path, headers, payloadslist, boundaries, original_request)
 
-                    if payloadslist == 'op':
+                    if payloadstype == 'op':
                         OraclePadding.multi_post_call(path, headers, payloadslist, boundaries, original_request)
 
-                    if payloadslist == 'xxe':
+                    if payloadstype == 'xxe':
                         XXE.multi_post_call(path, headers, payloadslist, boundaries, original_request)
 
 
@@ -143,16 +143,16 @@ def HTTP_request():
                     if payloadstype == 'si':
                         SOAPInjection.common_post_call(path, headers, payloadslist, post_params, original_request)
 
-                    if payloadslist == 'ti':
+                    if payloadstype == 'ti':
                         TemplateInjection.common_post_call(path, headers, payloadslist, post_params, original_request)
 
-                    if payloadslist == 'sr':
+                    if payloadstype == 'sr':
                         Serialize.common_post_call(path, headers, payloadslist, post_params, original_request)
 
-                    if payloadslist == 'op':
+                    if payloadstype == 'op':
                         OraclePadding.common_post_call(path, headers, payloadslist, post_params, original_request)
 
-                    if payloadslist == 'xxe':
+                    if payloadstype == 'xxe':
                         XXE.common_post_call(path, headers, payloadslist, post_params, original_request)
 
             if method == 'GET':
@@ -173,7 +173,7 @@ def HTTP_request():
                     if payloadstype == 'op':
                         OraclePadding.get_call(path, headers, data, payloadslist, original_request)
 
-                    if payloadslist == 'xxe':
+                    if payloadstype == 'xxe':
                         XXE.get_call(path, headers, data, payloadslist, original_request)
 
                 else:

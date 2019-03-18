@@ -30,7 +30,7 @@ class Threadxxe(Thread):
         new_headers = self.headers
         new_path = self.path
         new_params = self.params
-        if 'xml' in self.headers.get('Content-type'):
+        if 'xml' in self.headers.get('Content-Type'):
             print '\033[92m [+] FOUND XML Request Type: '
             print '[+] Manipulate it GOGOGO!!\033[0m'
             print '[+] Request type: ' + self.reqtype
@@ -44,12 +44,13 @@ class Threadxxe(Thread):
 
         #test case 1: convert to xml
         code_status_org = self.original_request.getcode()
-        code_status_org = list(code_status_org)
+        code_status_org = list(str(code_status_org))
         req_test = ""
         found_anything = 0
         found_xxe = 0
+        similarity_var = 0.89
         if code_status_org[0] == '2' or code_status_org[0] == '3' or code_status_org[0] == '4':
-            new_headers.update({'Content-type': 'application/xml'})
+            new_headers.update({'Content-Type': 'application/xml'})
             if 'POST-multi' in self.reqtype:
                 pass
             else:
@@ -57,19 +58,18 @@ class Threadxxe(Thread):
                 if 'POST' in self.reqtype:
                     resp_test = HTTPRequester.post_call(new_path, new_params, new_headers)
                     code_status_test = resp_test.getcode()
-                    code_status_test = list(code_status_test)
+                    code_status_test = list(str(code_status_test))
                     resp_test_html = resp_test.read()
                     if resp_test.headers.get('Content-Encoding') != None:
                         if 'gzip' in resp_test.headers.get('Content-Encoding'):
                             resp_test_html = zlib.decompress(resp_test_html, 16 + zlib.MAX_WBITS)
                     if code_status_test[0] == '5':
-                        if "XML" in resp_test_html:
-                            print '\033[33m [+] Possible XML Parsing ERROR\033[0m - \033[1m Content-Type to application/xml'
-                            print '\033[33m[+] Check if XML is really supported \033[0m'
-                            found_anything = 1
+                        print '\033[33m [+] Possible XML Parsing ERROR\033[0m - \033[1m Content-Type to application/xml'
+                        print '\033[33m[+] Check if XML is really supported \033[0m'
+                        found_anything = 1
 
                     try:
-                        new_params = dicttoxml(json.loads(self.params), attr_type=False)
+                        new_params = dicttoxml(json.loads(new_params), attr_type=False)
                         resp_test2 = HTTPRequester.post_call(new_path, new_params, new_headers)
 
                     except Exception as msg:
@@ -77,82 +77,106 @@ class Threadxxe(Thread):
                         new_dict = {}
                         new_params = new_params.split("&")
                         for var_val in new_params:
-                            var, val = var_val.split("=")
+                            var, val = var_val.split("=", 1)
                             new_dict[var] = val
                         new_params = dicttoxml(new_dict)
                         resp_test2 = HTTPRequester.post_call(new_path, new_params, new_headers)
 
-                    if self.original_request.getcode() == resp_test2.code():
+                    if list(str(self.original_request.getcode()))[0] == list(str(resp_test2.getcode()))[0] and code_status_test[0] == '5':
                         # analyze similarity
                         resp_test2_html = resp_test2.read()
-                        if 'gzip' in resp_test2.headers.get('Content-Encoding'):
-                            resp_test2_html = zlib.decompress(self.html, 16 + zlib.MAX_WBITS)
-                        similarity_index = jellyfish.jaro_distance(self.html, resp_test2_html)
+                        if resp_test.headers.get('Content-Encoding') != None:
+                            if 'gzip' in resp_test2.headers.get('Content-Encoding'):
+                                resp_test2_html = zlib.decompress(self.html, 16 + zlib.MAX_WBITS)
+                        similarity_index = jellyfish.jaro_distance(unicode(self.html, "utf-8",errors='replace'), unicode(resp_test2_html, "utf-8", errors='replace'))
 
                         # YOU CAN TUNE THE SIMILARITY INDEX - IT COMPARES HOW SIMILAR THE HTML RESPONSES ARE
-                        if similarity_index > 0.89:
+                        if similarity_index > similarity_var:
                             found_xxe = 1
                             print '\033[92m [+] Point of XXE FOUND'
-                            print 'Manipulate the parameters with external entities\033[0m'
+                            print "[+] Similarity index bigger than: " +similarity_var
+                            print '[+] Manipulate the parameters with external entities\033[0m'
                             print "[+] PATH: " + new_path
                             print "[+] REQUEST TYPE: " + self.reqtype
                             print '[+] POST PARAMETERS: ' + new_params
-                            print "\033[92m [+] HEADERS: "
+                            print "[+] HEADERS: "
                             for x in new_headers:
                                 print x + ': ' + new_headers.get(x)
-                            print "\033[0m ----------------------------------------------------------------------------------------------\n"
+                            print '\033[92m [+] POST PARAMETERS \033[0m :' + new_params
+                            print "----------------------------------------------------------------------------------------------\n"
 
                         else:
-                            if "XML" in resp_test2_html or "Exception" in resp_test2_html:
-                                print '\033[33m [+] Possible XML Parsing ERROR\033[0m - \033[1m Forged XML Request \033[0m'
-                                print '\033[33m[+] Check if XML is really supported \033[0m'
+                            found_xxe = 1
+                            print '\033[92m [+] Possible Point of XXE FOUND'
+                            print "[+] Error 5xx when converting Content-type"
+                            print "[+] Same status code when parsing XML content correctly"
+                            print '[+] Manipulate the parameters with external entities\033[0m'
+                            print "[+] PATH: " + new_path
+                            print "[+] REQUEST TYPE: " + self.reqtype
+                            print "[+] HEADERS: "
+                            for x in new_headers:
+                                print x + ': ' + new_headers.get(x)
+                            print '\033[92m [+] POST PARAMETERS \033[0m :' + new_params
+                            print "----------------------------------------------------------------------------------------------\n"
+
 
                 if 'GET' in self.reqtype:
                     resp_test = HTTPRequester.get_call(new_path+new_params, new_headers)
                     code_status_test = resp_test.getcode()
-                    code_status_test = list(code_status_test)
+                    code_status_test = list(str(code_status_test))
                     resp_test_html = resp_test.read()
                     if resp_test.headers.get('Content-Encoding') != None:
                         if 'gzip' in resp_test.headers.get('Content-Encoding'):
                             resp_test_html = zlib.decompress(resp_test_html, 16 + zlib.MAX_WBITS)
                     if code_status_test[0] == '5':
-                        if "XML" in resp_test_html or "Exception" in resp_test_html:
-                            print '\033[33m [+] Possible XML Parsing ERROR\033[0m - \033[1m Content-Type set to application/xml \033[0m'
-                            print '\033[33m[+]Check if XML is really supported \033[0m'
-                            found_anything = 1
+                        print '\033[33m [+] Possible XML Parsing ERROR\033[0m - \033[1m Content-Type set to application/xml \033[0m'
+                        print '\033[33m[+]Check if XML is really supported \033[0m'
+                        found_anything = 1
                     # not json
                     new_dict = {}
                     new_params = new_params.split("&")
                     for var_val in new_params:
-                        var, val = var_val.split("=")
+                        var, val = var_val.split("=",1)
                         new_dict[var] = val
                     new_params = dicttoxml(new_dict)
                     resp_test2 = HTTPRequester.post_call(new_path, new_params, new_headers)
 
-                    if self.original_request.getcode() == resp_test2.code():
+                    if list(str(self.original_request.getcode()))[0] == list(str(resp_test2.getcode()))[0] and code_status_test[0] == '5':
                         # analyze similarity
                         resp_test2_html = resp_test2.read()
-                        if 'gzip' in resp_test2.headers.get('Content-Encoding'):
-                            resp_test2_html = zlib.decompress(self.html, 16 + zlib.MAX_WBITS)
-                        similarity_index = jellyfish.jaro_distance(self.html, resp_test2_html)
+                        if resp_test.headers.get('Content-Encoding') != None:
+                            if 'gzip' in resp_test2.headers.get('Content-Encoding'):
+                                resp_test2_html = zlib.decompress(self.html, 16 + zlib.MAX_WBITS)
+                        similarity_index = jellyfish.jaro_distance(unicode(self.html, "utf-8",errors='replace'), unicode(resp_test2_html, "utf-8",errors='replace'))
 
                         # YOU CAN TUNE THE SIMILARITY INDEX - IT COMPARES HOW SIMILAR THE HTML RESPONSES ARE
-                        if similarity_index > 0.89:
+                        if similarity_index > similarity_var:
                             found_xxe = 1
                             print '\033[92m [+] Point of XXE FOUND'
+                            print "[+] Similarity index bigger than: " + similarity_var
                             print 'Manipulate the parameters with external entities\033[0m'
                             print "[+] PATH: " + new_path
                             print "[+] REQUEST TYPE: " + self.reqtype
-                            print '[+] POST PARAMETERS: ' + new_params
-                            print "\033[92m [+] HEADERS: "
+                            print "[+] HEADERS: "
                             for x in new_headers:
                                 print x + ': ' + new_headers.get(x)
-                            print "\033[0m ----------------------------------------------------------------------------------------------\n"
+                            print '\033[92m [+] POST PARAMETERS \033[0m :' + new_params
+                            print "----------------------------------------------------------------------------------------------\n"
 
                         else:
-                            if "XML" in resp_test2_html or "Exception" in resp_test2_html:
-                                print '\033[33m [+] Possible XML Parsing ERROR\033[0m - \033[1mForged XML Request \033[0m'
-                                print '\033[33m [+]Check if XML is really supported \033[0m'
+                            found_xxe = 1
+                            print '\033[92m [+] Possible Point of XXE FOUND'
+                            print "[+] Error 5xx when converting Content-type"
+                            print "[+] Same status code when parsing XML content correctly"
+                            print '[+] Manipulate the parameters with external entities\033[0m'
+                            print "[+] PATH: " + new_path
+                            print "[+] REQUEST TYPE: " + self.reqtype
+                            print '[+] POST PARAMETERS: ' + new_params
+                            print "[+] HEADERS: "
+                            for x in new_headers:
+                                print x + ': ' + new_headers.get(x)
+                            print '\033[92m [+] POST PARAMETERS \033[0m : ' + new_params
+                            print "----------------------------------------------------------------------------------------------\n"
 
                 if found_anything == 1 and found_xxe == 0:
                     if 'POST' in self.reqtype:

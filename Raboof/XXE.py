@@ -15,7 +15,7 @@ def multi_post_call(path, headers, payloadslist, boundaries, original_request):
 def common_post_call(path, headers, payloadslist, post_params, original_request):
 
     HTTPRequester.check_max_threads()
-    new_thread = Thread_types.Threadxxe(path, headers, payloadslist, post_params, original_request, 'POST')
+    new_thread = Thread_types.Threadxxe(path, headers, payloadslist, ''.join(post_params), original_request, 'POST')
     HTTPRequester.thread_starter(new_thread)
 
 def get_call(path, headers, data, payloadslist, original_request):
