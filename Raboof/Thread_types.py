@@ -27,17 +27,18 @@ class Threadxxe(Thread):
                 self.html = zlib.decompress(self.html, 16 + zlib.MAX_WBITS)
 
     def run(self):
+        final_print = ""
         new_headers = self.headers
         new_path = self.path
         new_params = self.params
         if 'xml' in self.headers.get('Content-Type'):
-            print '\033[92m [+] FOUND XML Request Type: '
-            print '[+] Manipulate it GOGOGO!!\033[0m'
-            print '[+] Request type: ' + self.reqtype
+            final_print += '\033[92m [+] FOUND XML Request Type: \n'
+            final_print += '[+] Manipulate it GOGOGO!!\033[0m \n'
+            final_print += '[+] Request type: ' + self.reqtype +'\n'
             if self.reqtype == 'GET':
-                print '[+] Path: ' + self.path + self.params
+                final_print +=  '[+] Path: ' + self.path + self.params + '\n'
             else:
-                print '[+] Path: ' + self.path
+                final_print += '[+] Path: ' + self.path + '\n'
             print "[+] HEADERS: "
             for x in self.headers:
                 print x + ': ' + self.headers.get(x)
@@ -64,8 +65,8 @@ class Threadxxe(Thread):
                         if 'gzip' in resp_test.headers.get('Content-Encoding'):
                             resp_test_html = zlib.decompress(resp_test_html, 16 + zlib.MAX_WBITS)
                     if code_status_test[0] == '5':
-                        print '\033[33m [+] Possible XML Parsing ERROR\033[0m - \033[1m Content-Type to application/xml'
-                        print '\033[33m[+] Check if XML is really supported \033[0m'
+                        final_print += '\033[33m [+] Possible XML Parsing ERROR\033[0m - \033[1m Content-Type to application/xml \n'
+                        final_print +=  '\033[33m[+] Check if XML is really supported \033[0m \n'
                         found_anything = 1
 
                     try:
@@ -93,31 +94,31 @@ class Threadxxe(Thread):
                         # YOU CAN TUNE THE SIMILARITY INDEX - IT COMPARES HOW SIMILAR THE HTML RESPONSES ARE
                         if similarity_index > similarity_var:
                             found_xxe = 1
-                            print '\033[92m [+] Point of XXE FOUND'
-                            print "[+] Similarity index bigger than: " +similarity_var
-                            print '[+] Manipulate the parameters with external entities\033[0m'
-                            print "[+] PATH: " + new_path
-                            print "[+] REQUEST TYPE: " + self.reqtype
-                            print '[+] POST PARAMETERS: ' + new_params
-                            print "[+] HEADERS: "
+                            final_print +=  '\033[92m [+] Point of XXE FOUND \n'
+                            final_print +=  "[+] Similarity index bigger than: " +similarity_var + '\n'
+                            final_print +=  '[+] Manipulate the parameters with external entities\033[0m \m'
+                            final_print +=  "[+] PATH: " + new_path + '\n'
+                            final_print +=  "[+] REQUEST TYPE: " + self.reqtype + '\n'
+                            final_print +=  '[+] POST PARAMETERS: ' + new_params + '\n'
+                            final_print +=  "[+] HEADERS: \n"
                             for x in new_headers:
-                                print x + ': ' + new_headers.get(x)
-                            print '\033[92m [+] POST PARAMETERS \033[0m :' + new_params
-                            print "----------------------------------------------------------------------------------------------\n"
+                                final_print +=  x + ': ' + new_headers.get(x) + '\n'
+                            final_print +=  '\033[92m [+] POST PARAMETERS \033[0m :' + new_params + '\n'
+                            final_print +=  "----------------------------------------------------------------------------------------------\n"
 
                         else:
                             found_xxe = 1
-                            print '\033[92m [+] Possible Point of XXE FOUND'
-                            print "[+] Error 5xx when converting Content-type"
-                            print "[+] Same status code when parsing XML content correctly"
-                            print '[+] Manipulate the parameters with external entities\033[0m'
-                            print "[+] PATH: " + new_path
-                            print "[+] REQUEST TYPE: " + self.reqtype
-                            print "[+] HEADERS: "
+                            final_print +=  '\033[92m [+] Possible Point of XXE FOUND \n'
+                            final_print +=  "[+] Error 5xx when converting Content-type \n"
+                            final_print +=  "[+] Same status code when parsing XML content correctly \n"
+                            final_print +=  '[+] Manipulate the parameters with external entities\033[0m \n'
+                            final_print +=  "[+] PATH: " + new_path + '\n'
+                            final_print +=  "[+] REQUEST TYPE: " + self.reqtype + '\n'
+                            final_print +=  "[+] HEADERS: \n"
                             for x in new_headers:
-                                print x + ': ' + new_headers.get(x)
-                            print '\033[92m [+] POST PARAMETERS \033[0m :' + new_params
-                            print "----------------------------------------------------------------------------------------------\n"
+                                final_print +=  x + ': ' + new_headers.get(x) + '\n'
+                            final_print +=  '\033[92m [+] POST PARAMETERS \033[0m :' + new_params + '\n'
+                            final_print +=  "----------------------------------------------------------------------------------------------\n"
 
 
                 if 'GET' in self.reqtype:
@@ -129,8 +130,8 @@ class Threadxxe(Thread):
                         if 'gzip' in resp_test.headers.get('Content-Encoding'):
                             resp_test_html = zlib.decompress(resp_test_html, 16 + zlib.MAX_WBITS)
                     if code_status_test[0] == '5':
-                        print '\033[33m [+] Possible XML Parsing ERROR\033[0m - \033[1m Content-Type set to application/xml \033[0m'
-                        print '\033[33m[+]Check if XML is really supported \033[0m'
+                        final_print +=  '\033[33m [+] Possible XML Parsing ERROR\033[0m - \033[1m Content-Type set to application/xml \033[0m \n'
+                        final_print +=  '\033[33m[+]Check if XML is really supported \033[0m \n'
                         found_anything = 1
                     # not json
                     new_dict = {}
@@ -152,51 +153,52 @@ class Threadxxe(Thread):
                         # YOU CAN TUNE THE SIMILARITY INDEX - IT COMPARES HOW SIMILAR THE HTML RESPONSES ARE
                         if similarity_index > similarity_var:
                             found_xxe = 1
-                            print '\033[92m [+] Point of XXE FOUND'
-                            print "[+] Similarity index bigger than: " + similarity_var
-                            print 'Manipulate the parameters with external entities\033[0m'
-                            print "[+] PATH: " + new_path
-                            print "[+] REQUEST TYPE: " + self.reqtype
-                            print "[+] HEADERS: "
+                            final_print +=  '\033[92m [+] Point of XXE FOUND \n'
+                            final_print +=  "[+] Similarity index bigger than: " + similarity_var + '\n'
+                            final_print +=  'Manipulate the parameters with external entities\033[0m \n'
+                            final_print +=  "[+] PATH: " + new_path + '\n'
+                            final_print +=  "[+] REQUEST TYPE: " + self.reqtype + '\n'
+                            final_print +=  "[+] HEADERS: \n"
                             for x in new_headers:
-                                print x + ': ' + new_headers.get(x)
-                            print '\033[92m [+] POST PARAMETERS \033[0m :' + new_params
-                            print "----------------------------------------------------------------------------------------------\n"
+                                final_print +=  x + ': ' + new_headers.get(x) + '\n'
+                            final_print +=  '\033[92m [+] POST PARAMETERS \033[0m :' + new_params + '\n'
+                            final_print +=  "----------------------------------------------------------------------------------------------\n"
 
                         else:
                             found_xxe = 1
-                            print '\033[92m [+] Possible Point of XXE FOUND'
-                            print "[+] Error 5xx when converting Content-type"
-                            print "[+] Same status code when parsing XML content correctly"
-                            print '[+] Manipulate the parameters with external entities\033[0m'
-                            print "[+] PATH: " + new_path
-                            print "[+] REQUEST TYPE: " + self.reqtype
-                            print '[+] POST PARAMETERS: ' + new_params
-                            print "[+] HEADERS: "
+                            final_print +=  '\033[92m [+] Possible Point of XXE FOUND \n'
+                            final_print +=  "[+] Error 5xx when converting Content-type \n"
+                            final_print +=  "[+] Same status code when parsing XML content correctly \n"
+                            final_print +=  '[+] Manipulate the parameters with external entities\033[0m \n'
+                            final_print +=  "[+] PATH: " + new_path + '\n'
+                            final_print +=  "[+] REQUEST TYPE: " + self.reqtype + '\n'
+                            final_print +=  '[+] POST PARAMETERS: ' + new_params + '\n'
+                            final_print +=  "[+] HEADERS: \n"
                             for x in new_headers:
-                                print x + ': ' + new_headers.get(x)
-                            print '\033[92m [+] POST PARAMETERS \033[0m : ' + new_params
-                            print "----------------------------------------------------------------------------------------------\n"
+                                final_print +=  x + ': ' + new_headers.get(x) + '\n'
+                            final_print +=  '\033[92m [+] POST PARAMETERS \033[0m : ' + new_params + '\n'
+                            final_print +=  "----------------------------------------------------------------------------------------------\n"
 
                 if found_anything == 1 and found_xxe == 0:
                     if 'POST' in self.reqtype:
-                        print "[+] PATH: " + self.path
-                        print "[+] REQUEST TYPE: " + self.reqtype
-                        print '[+] POST PARAMETERS: ' + self.params
-                        print "[+] HEADERS: "
+                        final_print +=  "[+] PATH: " + self.path + '\n'
+                        final_print +=  "[+] REQUEST TYPE: " + self.reqtype + '\n'
+                        final_print +=  '[+] POST PARAMETERS: ' + self.params + '\n'
+                        final_print +=  "[+] HEADERS: \n"
                         for x in self.headers:
-                            print x + ': ' + self.headers.get(x)
-                        print "[+] RESPONSE: "
-                        print resp_test_html
+                            final_print +=  x + ': ' + self.headers.get(x) + '\n'
+                        final_print +=  "[+] RESPONSE: \n"
+                        final_print +=  resp_test_html + '\n'
                     if 'GET' in self.reqtype:
-                        print "[+] PATH: " + self.path + self.params
-                        print "[+] REQUEST TYPE: " + self.reqtype
-                        print "[+] HEADERS: "
+                        final_print +=  "[+] PATH: " + self.path + self.params + '\n'
+                        final_print +=  "[+] REQUEST TYPE: " + self.reqtype + '\n'
+                        final_print +=  "[+] HEADERS: \n"
                         for x in self.headers:
-                            print x + ': ' + self.headers.get(x)
-                        print "[+] RESPONSE: "
-                        print resp_test_html
+                            final_print +=  x + ': ' + self.headers.get(x) + '\n'
+                        final_print +=  "[+] RESPONSE: " + '\n'
+                        final_print +=  resp_test_html + '\n'
                     print "----------------------------------------------------------------------------------------------\n"
+        print final_print
 
 class Threadop(Thread):
 
