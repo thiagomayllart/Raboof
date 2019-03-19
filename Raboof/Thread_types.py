@@ -492,6 +492,7 @@ class Threadti(Thread):
                         final_print += "----------------------------------------------------------------------------------------------\n"
         print final_print + "\n[-]"
 
+
 class Threadpp(Thread):
     def __init__(self, path, data, headers, original_request, param_exploited, reqtype, gibberish_data, gibberish_numb_data):
         Thread.__init__(self)
