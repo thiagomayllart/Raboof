@@ -222,7 +222,7 @@ class Threadop(Thread):
 
     def run(self):
         #get the cookies
-        final_print = ""
+        final_print = "-\n"
         found_anything = 0
         cookies = self.headers.get('Cookie')
         cookies = cookies.split(";")
@@ -461,7 +461,7 @@ class Threadti(Thread):
                 self.html = zlib.decompress(self.html, 16 + zlib.MAX_WBITS)
 
     def run(self):
-        final_print = ""
+        final_print = "[+]"
         for regions in self.list_regions:
                 out_payload = HTTPRequester.find_between(self.html, regions[0], regions[1])
                 if self.template_inj_test == 0:
@@ -490,7 +490,7 @@ class Threadti(Thread):
                         for x in self.headers:
                             final_print += x + ': ' + self.headers.get(x) + '\n'
                         final_print += "----------------------------------------------------------------------------------------------\n"
-        print final_print
+        print final_print + "\n[-]"
 
 class Threadpp(Thread):
     def __init__(self, path, data, headers, original_request, param_exploited, reqtype, gibberish_data, gibberish_numb_data):
