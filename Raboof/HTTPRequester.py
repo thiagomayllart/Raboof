@@ -93,8 +93,8 @@ def HTTP_request():
 
         path = find_between(request, '<url><![CDATA[', ']]></url>')
         raw_request = find_between(request, '"false"><![CDATA[', ']]></request>')
-        raw_header, data = raw_request.split('\r\n\r\n', 1)
-        lines = raw_header.split('\r\n')
+        raw_header, data = raw_request.split('\n\n', 1)
+        lines = raw_header.split('\n')
         method = ''
         if 'POST' in lines[0]:
             method = 'POST'

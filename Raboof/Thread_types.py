@@ -31,17 +31,18 @@ class Threadxxe(Thread):
         new_headers = self.headers
         new_path = self.path
         new_params = self.params
-        if 'xml' in self.headers.get('Content-Type'):
-            final_print += '\033[92m [+] FOUND XML Request Type: \n'
-            final_print += '[+] Manipulate it GOGOGO!!\033[0m \n'
-            final_print += '[+] Request type: ' + self.reqtype +'\n'
-            if self.reqtype == 'GET':
-                final_print +=  '[+] Path: ' + self.path + self.params + '\n'
-            else:
-                final_print += '[+] Path: ' + self.path + '\n'
-            print "[+] HEADERS: "
-            for x in self.headers:
-                print x + ': ' + self.headers.get(x)
+        if self.headers.get('Content-Type') != None:
+            if 'xml' in self.headers.get('Content-Type'):
+                final_print += '\033[92m [+] FOUND XML Request Type: \n'
+                final_print += '[+] Manipulate it GOGOGO!!\033[0m \n'
+                final_print += '[+] Request type: ' + self.reqtype +'\n'
+                if self.reqtype == 'GET':
+                    final_print +=  '[+] Path: ' + self.path + self.params + '\n'
+                else:
+                    final_print += '[+] Path: ' + self.path + '\n'
+                final_print += "[+] HEADERS: " + '\n'
+                for x in self.headers:
+                    final_print += x + ': ' + self.headers.get(x) + '\n'
 
         #test case 1: convert to xml
         code_status_org = self.original_request.getcode()
@@ -221,6 +222,7 @@ class Threadop(Thread):
 
     def run(self):
         #get the cookies
+        final_print = ""
         found_anything = 0
         cookies = self.headers.get('Cookie')
         cookies = cookies.split(";")
@@ -244,19 +246,20 @@ class Threadop(Thread):
                     original_value = original_value+';\033[0m \033[94mmultiple of '+str(multiple)
                     self.found_on_cookie[cookie] = original_value
         if found_anything == 1:
-            print "[+] POSSIBLE COOKIE USING CBC CIPHER FOUND"
-            print "[+] PATH: " + self.path
-            print "[+] REQUEST TYPE: " + self.reqtype
+            final_print += "[+] POSSIBLE COOKIE USING CBC CIPHER FOUND \n"
+            final_print += "[+] PATH: " + self.path + '\n'
+            final_print += "[+] REQUEST TYPE: " + self.reqtype +'\n'
             if self.reqtype == 'POST':
-                print '[+] POST PARAMETERS: ' + self.params
-            print "[+] HEADERS: "
+                final_print += '[+] POST PARAMETERS: ' + self.params + '\n'
+            final_print += "[+] HEADERS: " + '\n'
             for x in self.headers:
-                print x + ': ' + self.headers.get(x)
-            print "[+] Printing Possibly Vulnerable Cookies: "
+                final_print += x + ': ' + self.headers.get(x) + '\n'
+            final_print += "[+] Printing Possibly Vulnerable Cookies: " + '\n'
             for i,j in self.found_on_cookie.items():
-                print("\033[92m "+i+": "+j+"\n \033[0m")
+                final_print += ("\033[92m "+i+": "+j+"\n \033[0m") + '\n'
 
-            print "----------------------------------------------------------------------------------------------\n"
+            final_print += "----------------------------------------------------------------------------------------------\n"
+        print final_print
 
     def get_hex(selfs,s):
         hex = "".join("{:02x}".format(ord(c)) for c in s)
@@ -305,6 +308,7 @@ class Threadsr(Thread):
 
     def run(self):
         #Analyzing response:
+        final_print = ""
         found_on_response = []
         found_on_request_get = []
         found_on_request_post = []
@@ -366,74 +370,75 @@ class Threadsr(Thread):
         if self.reqtype == 'GET':
             if len(found_on_request_get) > 0:
                 found_anything = 1
-                print '[+] Found Serialization Pattern on GET REQUEST Parameters: '
-                print '[+] Patterns: '
+                final_print += '[+] Found Serialization Pattern on GET REQUEST Parameters: \n'
+                final_print += '[+] Patterns: \n'
                 for i in found_on_request_get:
-                    print i
+                    final_print += i + '\n'
             if len(found_on_request_header) > 0:
                 found_anything = 1
-                print '[+] Found Serialization Pattern on GET REQUEST Header: '
-                print '[+] Patterns: '
+                final_print += '[+] Found Serialization Pattern on GET REQUEST Header: ' + '\n'
+                final_print += '[+] Patterns: ' + '\n'
                 for i in found_on_request_header:
-                    print i
+                    final_print += i + '\n'
             if len(found_on_content_type_req) > 0:
                 found_anything = 1
-                print '[+] Found Serialization Pattern on GET REQUEST Content-Type: '
-                print '[+] Patterns: '
+                final_print += '[+] Found Serialization Pattern on GET REQUEST Content-Type: ' + '\n'
+                final_print += '[+] Patterns: \n'
                 for i in found_on_content_type_req:
-                    print i
+                    final_print += i + '\n'
 
         if self.reqtype == 'POST':
             if len(found_on_request_post) > 0:
                 found_anything = 1
-                print '[+] Found Serialization Pattern on POST DATA Parameters: '
-                print '[+] Patterns: '
+                final_print += '[+] Found Serialization Pattern on POST DATA Parameters: ' + '\n'
+                final_print += '[+] Patterns: ' + '\n'
                 for i in found_on_request_post:
-                    print i
+                    final_print += i + '\n'
             if len(found_on_request_header) > 0:
                 found_anything = 1
-                print '[+] Found Serialization Pattern on POST REQUEST Header: '
-                print '[+] Patterns: '
+                final_print += '[+] Found Serialization Pattern on POST REQUEST Header: ' + '\n'
+                final_print += '[+] Patterns: ' + '\n'
                 for i in found_on_request_header:
-                    print i
+                    final_print += i + '\n'
             if len(found_on_content_type_req) > 0:
                 found_anything = 1
-                print '[+] Found Serialization Pattern on POST REQUEST Content-Type: '
-                print '[+] Patterns: '
+                final_print += '[+] Found Serialization Pattern on POST REQUEST Content-Type: ' + '\n'
+                final_print += '[+] Patterns: ' + '\n'
                 for i in found_on_content_type_req:
-                    print i
+                    final_print += i + '\n'
 
 
         if len(found_on_response) > 0:
             found_anything = 1
-            print '[+] Found Serialization Pattern on HTTP Response: '
-            print '[+] Patterns: '
+            final_print += '[+] Found Serialization Pattern on HTTP Response: ' + '\n'
+            final_print += '[+] Patterns: ' + '\n'
             for i in found_on_response:
-                print i
+                final_print += i + '\n'
 
         if len(found_on_response_header) > 0:
             found_anything = 1
-            print '[+] Found Serialization Pattern on HTTP Response Header: '
-            print '[+] Patterns: '
+            final_print += '[+] Found Serialization Pattern on HTTP Response Header: ' + '\n'
+            final_print += '[+] Patterns: ' + '\n'
             for i in found_on_response_header:
-                print i
+                final_print += i + '\n'
 
         if len(found_on_content_type_resp):
             found_anything = 1
-            print '[+] Found Serialization Pattern on HTTP Response Content-Type: '
-            print '[+] Patterns: '
+            final_print += '[+] Found Serialization Pattern on HTTP Response Content-Type: ' + '\n'
+            final_print += '[+] Patterns: ' + '\n'
             for i in found_on_content_type_resp:
-                print i
+                final_print += i + '\n'
 
         if found_anything == 1:
-            print '[+] REQUEST TYPE: ' + self.reqtype
-            print '[+] PATH: ' + self.path
+            final_print += '[+] REQUEST TYPE: ' + self.reqtype + '\n'
+            final_print += '[+] PATH: ' + self.path + '\n'
             for x in self.headers:
-                print x + ': ' + self.headers.get(x)
+                final_print += x + ': ' + self.headers.get(x) + '\n'
             if self.reqtype == 'POST':
-                print '[+] DATA: ' + self.params
+                final_print += '[+] DATA: ' + self.params + '\n'
 
-            print "----------------------------------------------------------------------------------------------\n"
+            final_print += "----------------------------------------------------------------------------------------------\n"
+        print final_print
 
 class Threadti(Thread):
     def __init__(self, path, headers, data_pay, original_request, param_exploited, reqtype, pay_path, template_inj_type_test, list_regions):
@@ -456,32 +461,36 @@ class Threadti(Thread):
                 self.html = zlib.decompress(self.html, 16 + zlib.MAX_WBITS)
 
     def run(self):
+        final_print = ""
         for regions in self.list_regions:
                 out_payload = HTTPRequester.find_between(self.html, regions[0], regions[1])
                 if self.template_inj_test == 0:
                     if '49' in out_payload:
-                        print '[+] POINT OF TEMPLATE INJECTION FOUND'
-                        print '[+] LOCATION: ' + self.param_exploited
-                        print '[+] OUTPUT RESULT: ' + out_payload
-                        print '[+] REQUEST TYPE: ' + self.reqtype
-                        print '[+] PRINTING REQUEST: '
-                        print self.path
-                        print self.data_pay
+                        final_print += '[+] POINT OF TEMPLATE INJECTION FOUND' + '\n'
+                        final_print += '[+] LOCATION: ' + self.param_exploited + '\n'
+                        final_print += '[+] OUTPUT RESULT: ' + out_payload + '\n'
+                        final_print += '[+] REQUEST TYPE: ' + self.reqtype + '\n'
+                        final_print += '[+] PRINTING REQUEST: ' + '\n'
+                        final_print += "[+] PATH: " + self.path + '\n'
+                        final_print += "[+] PARAMETERS:" + self.data_pay + '\n'
+                        final_print += "[+] HEADERS: \n"
                         for x in self.headers:
-                            print x + ': ' + self.headers.get(x)
-                        print "----------------------------------------------------------------------------------------------\n"
+                            final_print += x + ': ' + self.headers.get(x) + '\n'
+                        final_print += "----------------------------------------------------------------------------------------------\n"
                 if self.template_inj_test == 1:
                     if '7777777' in out_payload:
-                        print '[+] POINT OF TEMPLATE INJECTION FOUND'
-                        print '[+] LOCATION: ' + self.param_exploited
-                        print '[+] OUTPUT RESULT: ' + out_payload
-                        print '[+] REQUEST TYPE: ' + self.reqtype
-                        print '[+] PRINTING REQUEST: '
-                        print self.path
-                        print self.data_pay
+                        final_print += '[+] POINT OF TEMPLATE INJECTION FOUND' + '\n'
+                        final_print += '[+] LOCATION: ' + self.param_exploited + '\n'
+                        final_print += '[+] OUTPUT RESULT: ' + out_payload + '\n'
+                        final_print += '[+] REQUEST TYPE: ' + self.reqtype + '\n'
+                        final_print += '[+] PRINTING REQUEST: ' + '\n'
+                        final_print += "[+] PATH: " + self.path + '\n'
+                        final_print += "[+] PARAMETERS:" + self.data_pay + '\n'
+                        final_print += "[+] HEADERS: \n"
                         for x in self.headers:
-                            print x + ': ' + self.headers.get(x)
-                        print "----------------------------------------------------------------------------------------------\n"
+                            final_print += x + ': ' + self.headers.get(x) + '\n'
+                        final_print += "----------------------------------------------------------------------------------------------\n"
+        print final_print
 
 class Threadpp(Thread):
     def __init__(self, path, data, headers, original_request, param_exploited, reqtype, gibberish_data, gibberish_numb_data):
